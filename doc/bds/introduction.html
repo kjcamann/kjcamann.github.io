@@ -1,0 +1,280 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Introduction &mdash; BDS 2018.1-alpha1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Lists Library" href="lists-main.html" />
+    <link rel="prev" title="Welcome to BDS" href="index.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> BDS
+          
+
+          
+            
+            <img src="_static/bds-logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2018.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#what-is-bds">What is BDS?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#why-should-i-care-about-this-library">Why should I care about this library?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-do-i-install-bds">How do I install BDS?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="lists-main.html">Lists Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utilities-main.html">Utility Libraries</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BDS</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Introduction</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/introduction.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="what-is-bds">
+<h2>What is BDS?<a class="headerlink" href="#what-is-bds" title="Permalink to this headline">¶</a></h2>
+<p>BDS stands for “BSD Data Structures.” It contains C++20 implementations of several well-known data structures from the <a class="reference external" href="https://en.wikipedia.org/wiki/Berkeley_Software_Distribution">BSD family of operating systems</a> (although a few of its designs come from <a class="reference external" href="https://en.wikipedia.org/wiki/OpenSolaris">OpenSolaris</a> and <a class="reference external" href="https://en.wikipedia.org/wiki/Data_Plane_Development_Kit">DPDK</a>).</p>
+<p>BDS contains:</p>
+<ul class="simple">
+<li>STL-like implementation of BSD’s <a class="reference external" href="https://man.openbsd.org/queue.3">queue(3)</a> intrusive linked list library</li>
+<li>STL-like implementation of FreeBSD’s intrusive, chained hash tables, similar to <a class="reference external" href="https://www.freebsd.org/cgi/man.cgi?query=hashinit&amp;sektion=9">hashinit(9)</a></li>
+<li><a class="reference external" href="https://en.cppreference.com/w/cpp/memory/memory_resource">std::pmr::memory_resource</a>-compatible implementation of the <a class="reference external" href="https://www.freebsd.org/cgi/man.cgi?query=vmem&amp;sektion=9">vmem(9)</a> general purpose memory allocator</li>
+<li><a class="reference external" href="https://en.cppreference.com/w/cpp/memory/allocator">std::allocator</a>-compatible implementation of the <a class="reference external" href="https://www.freebsd.org/cgi/man.cgi?query=uma&amp;sektion=9">uma(9) “zone”</a> pool allocator</li>
+<li>STL-like ring buffers based on FreeBSD’s <a class="reference external" href="https://www.freebsd.org/cgi/man.cgi?query=buf_ring">buf_ring(9)</a> and DPDK’s <a class="reference external" href="https://doc.dpdk.org/guides/prog_guide/ring_lib.html">librte_ring</a></li>
+<li>A ring based shared memory allocator based on DPDK’s <a class="reference external" href="https://doc.dpdk.org/guides/prog_guide/mempool_lib.html">librte_mempool</a></li>
+<li>A read/writer mutex that keeps track of all readers for debugging and robust deadlock detection, based on FreeBSD’s <a class="reference external" href="https://www.freebsd.org/cgi/man.cgi?query=rmlock&amp;sektion=9">rmlock</a> and conforming to the C++17 threading library concepts.</li>
+</ul>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This is an alpha release of BDS, made so that other early-stage projects could source it from github. Some of the libraries described above are not included in this alpha release, and the libraries that <em>are</em> included do not have stable APIs or complete documentation.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This alpha release of BDS requires C++ concepts, and only compiles with the experimental support for the concepts technical specification in gcc. For this same reason, the reference documentation is often incorrect or missing, since the concept declarations cannot be parsed by doxygen.</p>
+</div>
+</div>
+<div class="section" id="why-should-i-care-about-this-library">
+<h2>Why should I care about this library?<a class="headerlink" href="#why-should-i-care-about-this-library" title="Permalink to this headline">¶</a></h2>
+<p>Consider this sad-but-true observation from <a class="reference external" href="https://www.aosabook.org/en/index.html">The Architecture of Open Source Applications</a>:</p>
+<blockquote>
+<div>Architects look at thousands of buildings during their training, and study critiques of those buildings written by masters. In contrast, most software developers only ever get to know a handful of large programs well – usually programs they wrote themselves – and never study the great programs of history. As a result, they repeat one another’s mistakes rather than building on one another’s successes.</div></blockquote>
+<p>Most programmers are terrible software architects because they have never studied a truly great program designed by engineers who have mastered the art. If <em>you</em> have not done this, you should do it! One “great program of history” you might want to study is the FreeBSD kernel, because it has such excellent documentation.</p>
+<div class="sidebar">
+<p class="first sidebar-title">Why BSD and and why UNIX?</p>
+<p><a class="reference external" href="https://books.google.com/books?isbn=0321968972">The Design and Implementation of the FreeBSD Operating System</a> – one of the great works in computer science literature – walks through designs for all major subsystems needed for a modern OS. You will finish this book not just understanding a single great program, but understanding the brilliance of the original UNIX architecture.</p>
+<p class="last">This architecture is peerless in computer science – where there were once a million and one competitors, over time UNIX vanquished them all. This happened in large part because the clean, well-documented design made it possible to teach the architecture to the next generation of engineers. Every decade or so, a hefty tome would be published describing an updated UNIX design to the next class of operating system acolytes. This was true since the <a class="reference external" href="https://books.google.com/books?isbn=1573980137">very beginning</a>, through the <a class="reference external" href="https://books.google.com/books?id=BxZpQgAACAAJ&amp;dq=editions:6KhaBvAZBMMC">critical years of its adoption</a>, during the years <a class="reference external" href="https://books.google.com/books?id=6rjd2ZxE1vYC">it made the Internet possible</a> and when it replaced everything in <a class="reference external" href="https://books.google.com/books/about/Solaris_Internals.html?id=Aq9QAAAAMAAJ">commercial computing</a>, right up until <a class="reference external" href="https://books.google.com/books?id=3MWRMYRwulIC">modern times</a> where it is essentially one of only two designs left in the world – and its only remaining competitor is slowly <a class="reference external" href="https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux">embracing its programming interface.</a></p>
+</div>
+<div class="section" id="what-bds-offers-you">
+<h3>What BDS offers you<a class="headerlink" href="#what-bds-offers-you" title="Permalink to this headline">¶</a></h3>
+<p>In my experience, the effect of studying any great program is two-fold. First, your skills are <em>vastly</em> increased, elevating you from a mere programmer to a true “software engineer.” Once you have seen what a great program looks like, you can stand on the shoulders of giants and credibly try to emulate it.</p>
+<p>A second, more subtle effect is that the “patterns” and “structure” of the code begin to rub off on you. Just like artists are able to cite their “artistic influences,” your own programming style becomes influenced by the great programs you study.</p>
+<p>When this happens, there is a typically a problem.</p>
+<p>All “large” programs (&gt; 100,000 lines of code) are full of smaller helper libraries and attendant design patterns that help organize their code. Because the “great programs of history” are, by definition, very cleanly designed, you find yourself reaching for their libraries and design patterns in your own projects.</p>
+<p>Although such code is typically useful <em>outside</em> of the original project, it often isn’t easy to repackage into a free-standing library. Sometimes it’s full of dependencies on unwanted interfaces (e.g., header files). Other times, you want to reuse the <em>core ideas</em> but in a different programming language.</p>
+<p>BDS contains high quality, free-standing re-implementations of several such libraries from BSD-licensed code bases. The original libraries were mostly written in C, whereas BDS rewrites them using C++20 idioms.</p>
+<p>If you haven’t studied any of the programs that this code is derived from, you might not see the appeal. However, if you <em>have</em> witnessed the engineering excellence of these programs, you just might find yourself reaching for these powerful abstractions in your C++ projects.</p>
+<p>And finally, here they are!</p>
+</div>
+</div>
+<div class="section" id="how-do-i-install-bds">
+<h2>How do I install BDS?<a class="headerlink" href="#how-do-i-install-bds" title="Permalink to this headline">¶</a></h2>
+<p>BDS is a header-only library, so there is little to do. The included CMake build system is only needed to build the test suite and the Sphinx documentation, but it does include an <code class="docutils literal notranslate"><span class="pre">install</span></code> target which will copy the BDS headers, if you wish to use that. To build the Sphinx documentation, you must also install <a class="reference external" href="https://www.doxygen.org">doxygen</a>, <a class="reference external" href="https://breathe.readthedocs.io">breathe</a>, and the <a class="reference external" href="https://sphinx-rtd-theme.readthedocs.io/en/latest">“Read the Docs” Sphinx theme</a>. Building the test suite will use CMake’s <a class="reference external" href="https://cmake.org/cmake/help/latest/module/ExternalProject.html">ExternalProject</a> command to fetch the <a class="reference external" href="https://github.com/catchorg/Catch2">Catch2</a> unit testing framework from Github, so it requires an Internet connection.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="lists-main.html" class="btn btn-neutral float-right" title="Lists Library" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Welcome to BDS" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Kenneth Camann.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2018.1-alpha1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

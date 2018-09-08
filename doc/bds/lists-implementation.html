@@ -1,0 +1,320 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>BDS lists implementation notes &mdash; BDS 2018.1-alpha1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Utility Libraries" href="utilities-main.html" />
+    <link rel="prev" title="Lists Reference" href="lists-reference.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> BDS
+          
+
+          
+            
+            <img src="_static/bds-logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2018.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="lists-main.html">Lists Library</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="lists-guide.html">Lists Quick Start Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lists-rationale.html">Why Intrusive Lists?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lists-queue-and-stl.html">How BDS merges the <code class="docutils literal notranslate"><span class="pre">queue(3)</span></code> and STL container designs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lists-reference.html">Lists Reference</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">BDS lists implementation notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="utilities-main.html">Utility Libraries</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BDS</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="lists-main.html">Lists Library</a> &raquo;</li>
+        
+      <li>BDS lists implementation notes</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/lists-implementation.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="bds-lists-implementation-notes">
+<h1>BDS lists implementation notes<a class="headerlink" href="#bds-lists-implementation-notes" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#link-encoding" id="id4">Link encoding</a><ul>
+<li><a class="reference internal" href="#offset-link-encoding" id="id5">Offset link encoding</a></li>
+<li><a class="reference internal" href="#invocable-link-encoding" id="id6">Invocable link encoding</a></li>
+<li><a class="reference internal" href="#iterator-implementation" id="id7">Iterator implementation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#list-design" id="id8">List design</a></li>
+</ul>
+</div>
+<div class="section" id="link-encoding">
+<h2><a class="toc-backref" href="#id4">Link encoding</a><a class="headerlink" href="#link-encoding" title="Permalink to this headline">¶</a></h2>
+<p>Links to neighboring list items are stored in intrusive “entry” structures like this one:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">tailq_entry</span> <span class="p">{</span>
+  <span class="n">std</span><span class="o">::</span><span class="kt">uintptr_t</span> <span class="n">next</span><span class="p">;</span>
+  <span class="n">std</span><span class="o">::</span><span class="kt">uintptr_t</span> <span class="n">prev</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>Note that each link is stored as an opaque, pointer-sized value – this value will either be a pointer to a neighbor’s <code class="docutils literal notranslate"><span class="pre">tailq_entry</span></code> or a tagged pointer that uses a more complex encoding that is explained below.</p>
+<p>The core list classes, e.g., <code class="docutils literal notranslate"><span class="pre">tailq_base</span></code>, use a traits class called <code class="docutils literal notranslate"><span class="pre">link_encoder</span></code> to read and write link values in the entry. The <code class="docutils literal notranslate"><span class="pre">EntryAccess</span></code> template parameter determines what kind of link encoding the list will use, via template partial specialization.</p>
+<div class="section" id="offset-link-encoding">
+<h3><a class="toc-backref" href="#id5">Offset link encoding</a><a class="headerlink" href="#offset-link-encoding" title="Permalink to this headline">¶</a></h3>
+<p>In the original <code class="docutils literal notranslate"><span class="pre">queue(3)</span></code> library, the links are pointers to the neighboring entry structures. To get a pointer to the list item given a pointer to the entry, <code class="docutils literal notranslate"><span class="pre">queue(3)</span></code> calculates the address of the enclosing <code class="docutils literal notranslate"><span class="pre">T</span></code> object from the address of the entry using the <code class="docutils literal notranslate"><span class="pre">offsetof</span></code> macro. In BDS, this is referred to as the “offset link encoding,” because it relies on the entry living at a known offset in the list item. A picture is shown below:</p>
+<div class="figure" id="id1">
+<img alt="slist using an offset link encoding" src="_images/slist-diagram-offset.png" />
+<p class="caption"><span class="caption-text">An <code class="docutils literal notranslate"><span class="pre">slist</span></code> using an offset-based link encoding. This tends to generate the most efficient code.</span></p>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">link_encoder</span></code> class template has a partial specialization when the entry access functor is <code class="docutils literal notranslate"><span class="pre">offset_extractor</span></code>:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">EntryType</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">Offset</span><span class="p">,</span> <span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="n">link_encoder</span><span class="o">&lt;</span><span class="n">EntryType</span><span class="p">,</span> <span class="n">offset_extractor</span><span class="o">&lt;</span><span class="n">EntryType</span><span class="p">,</span> <span class="n">Offset</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;</span> <span class="p">{</span>
+  <span class="c1">// ... specialization using offsetof</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>To get a <code class="docutils literal notranslate"><span class="pre">tailq_entry</span> <span class="pre">*</span></code> from a <code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">*</span></code> (or vice versa), this specialization just adds or subtracts the offset and performs pointer casts.</p>
+</div>
+<div class="section" id="invocable-link-encoding">
+<h3><a class="toc-backref" href="#id6">Invocable link encoding</a><a class="headerlink" href="#invocable-link-encoding" title="Permalink to this headline">¶</a></h3>
+<p>Although offset link encoding tends to generate the most compact code, it cannot be used with every item type. The C++ standard only guarantees that <code class="docutils literal notranslate"><span class="pre">offsetof</span></code> will work on standard layout types (because <code class="docutils literal notranslate"><span class="pre">queue(3)</span></code> is a C library, it only needs to concern itself with such types). Since C++17, an implementation may choose to support other types if its class layout strategy can guarantee a fixed offset for that type.</p>
+<p>But there are also other reasons to avoid <code class="docutils literal notranslate"><span class="pre">offsetof</span></code>, e.g., if the user prefers encapsulation and does not want to use friend declarations:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ListItem</span> <span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+  <span class="n">tailq_entry</span> <span class="o">&amp;</span><span class="n">getEntry</span><span class="p">()</span> <span class="k">noexcept</span> <span class="p">{</span> <span class="k">return</span> <span class="n">m_entry</span><span class="p">;</span> <span class="p">}</span>
+
+<span class="k">private</span><span class="o">:</span>
+  <span class="n">tailq_entry</span> <span class="n">m_entry</span><span class="p">;</span> <span class="c1">// Not accessible by the list, must call getEntry</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>In this case, the tailq’s <code class="docutils literal notranslate"><span class="pre">EntryAccess</span></code> template argument will be a member function pointer to <code class="docutils literal notranslate"><span class="pre">getEntry</span></code> wrapped in a functor, i.e. <code class="docutils literal notranslate"><span class="pre">constexpr_invocable&lt;ListItem::getEntry&gt;</span></code>.</p>
+<p>Here, the “invocable link encoding” is used. In this scheme, most links store a tagged pointer to the neighboring item but with the low bit set. This low bit is the “value tag”, indicating that the pointer refers to a list item.</p>
+<p>If the low bit is not set, it means the link directly points to an entry structure. This is needed for the “head” entry, which does not have a corresponding list item. The tagging behavior is shown in later figure, depicting the <a class="reference internal" href="#lists-tailq-invocable-figure"><span class="std std-ref">tailq design</span></a>. Below we see the invocable link encoding for a simple <code class="docutils literal notranslate"><span class="pre">slist</span></code>:</p>
+<div class="figure" id="id2">
+<img alt="slist using an invocable link encoding" src="_images/slist-diagram-invocable.png" />
+<p class="caption"><span class="caption-text">An <code class="docutils literal notranslate"><span class="pre">slist</span></code> using the invocable link encoding. List entries usually store pointers to items, not to their entry subobject. Entries are obtained by calling the entry accessor function.</span></p>
+</div>
+<p>To get a <code class="docutils literal notranslate"><span class="pre">tailq_entry</span> <span class="pre">*</span></code> from a <code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">*</span></code> we retrieve the <code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">*</span></code> value by masking off the value tag and invoking the entry access functor to yield the entry:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">tailq_entry</span> <span class="o">&amp;</span><span class="n">entry</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke</span><span class="p">(</span><span class="n">entryAccessor</span><span class="p">,</span> <span class="o">*</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span><span class="p">)(</span><span class="n">encoded</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">ValueTag</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>Without <code class="docutils literal notranslate"><span class="pre">offsetof</span></code>, we cannot easily derive a <code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">*</span></code> from a <code class="docutils literal notranslate"><span class="pre">tailq_entry</span> <span class="pre">*</span></code>, which is why this encoding is needed in the first place: the implementation must remember the item pointer and poke at the entry using the accessor whenver it needs it.</p>
+</div>
+<div class="section" id="iterator-implementation">
+<h3><a class="toc-backref" href="#id7">Iterator implementation</a><a class="headerlink" href="#iterator-implementation" title="Permalink to this headline">¶</a></h3>
+<p>List iterators store an encoded link value for the “current” list item. As described above, with the help of the link encoder (and the <code class="docutils literal notranslate"><span class="pre">EntryAccess</span></code> functor, for invocable link encoding), the iterator can access both the <code class="docutils literal notranslate"><span class="pre">entry</span></code> object and the list item.</p>
+<p>The iterator is either the size of a single pointer or two pointers, depending on the <code class="docutils literal notranslate"><span class="pre">EntryAccess</span></code> functor. The iterator stores a special “smart pointer” to the invocable object, <a class="reference internal" href="intrusive-types.html#_CPPv3N3bds24compressed_invocable_refE" title="bds::compressed_invocable_ref"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">bds::compressed_invocable_ref</span></code></a>, which (using template partial specialization) is empty if the <code class="docutils literal notranslate"><span class="pre">EntryAccess</span></code> functor is <a class="reference internal" href="intrusive-concepts.html#_CPPv3I0EN3bds9StatelessE" title="bds::Stateless"><code class="xref cpp cpp-concept docutils literal notranslate"><span class="pre">stateless</span></code></a>, i.e., if it is both an empty class and is trivially-constructible. This smart pointer is also declared with <code class="docutils literal notranslate"><span class="pre">[[no_unique_address]]</span></code>, so if the accessor is stateless, it will not store anything. This is the common case, because both offset-based and <cite>constexpr_invocable</cite>-based functors are stateless.</p>
+</div>
+</div>
+<div class="section" id="list-design">
+<h2><a class="toc-backref" href="#id8">List design</a><a class="headerlink" href="#list-design" title="Permalink to this headline">¶</a></h2>
+<p>The singly-linked list design is straight-forward: a head entry points to the first item, and all the intrusive entries point to the next item. The last item has a <code class="docutils literal notranslate"><span class="pre">next</span></code> value of <code class="docutils literal notranslate"><span class="pre">nullptr</span></code> (encoded as zero). In the case of <code class="docutils literal notranslate"><span class="pre">stailq</span></code>, an encoded link to the last item also stored.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">tailq</span></code>’s doubly-linked list design is insipred by the <a class="reference external" href="https://github.com/llvm-mirror/libcxx/blob/master/include/list">std::list</a> implementation in libc++. In this design, the list is actually circular: the <code class="docutils literal notranslate"><span class="pre">tailq_entry</span></code> in the list head links the two ends of the list, and corresponds to the <code class="docutils literal notranslate"><span class="pre">end()</span></code> sentinel. Its “previous” link points to the last item in the list, and its “next” item points back around to the first item in the list. This is shown in the figure below, which also illustrates the tagged pointers in the invocable link encoding:</p>
+<div class="figure" id="id3">
+<span id="lists-tailq-invocable-figure"></span><img alt="tailq data structure diagram" src="_images/tailq-diagram-invocable.png" />
+<p class="caption"><span class="caption-text">A <code class="docutils literal notranslate"><span class="pre">tailq</span></code> using an invocable link encoding, and demonstrating the circular list design. The shaded pointers are untagged, so they point directly to the <code class="docutils literal notranslate"><span class="pre">tailq_entry</span></code> in the head object. The unshaded pointers are “value tagged,” so they point directly to list items.</span></p>
+</div>
+<p>When the list is empty, both links in the head entry point to itself:</p>
+<div class="figure">
+<img alt="empty tailq data structure diagram" src="_images/tailq-empty-diagram.png" />
+</div>
+<p>This is the ideal design given the STL container requirements, e.g., that <code class="docutils literal notranslate"><span class="pre">*--end()</span></code> is a valid expression that yields the same value as <code class="docutils literal notranslate"><span class="pre">back()</span></code>. If you work out how to edit the links to insert and remove items “in the middle” of the list, this same code will work even at the boundary conditions (a list of size 0, size 1, etc.) without any special conditionals that check for those cases.</p>
+<p>This interesting property makes the circular doubly-linked list one of the “cleanest” and most “algorithmically satisfying” data structures you’re ever likely to encounter – especially when compared to “job interview white board” linked lists which explicitly use <code class="docutils literal notranslate"><span class="pre">nullptr</span></code> at the head/tail of the list, and need <code class="docutils literal notranslate"><span class="pre">if</span></code> statements in almost every function to treat the boundary cases differently.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="utilities-main.html" class="btn btn-neutral float-right" title="Utility Libraries" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="lists-reference.html" class="btn btn-neutral" title="Lists Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Kenneth Camann.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2018.1-alpha1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
