@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Why Intrusive Lists? &mdash; BDS 2018.1-alpha1 documentation</title>
+  <title>Why Intrusive Lists? &mdash; BDS 2019.1-alpha1 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                2018.1
+                2019.1
               </div>
             
           
@@ -243,8 +243,8 @@
 <h2><a class="toc-backref" href="#id4">How do data structures affect code quality?</a><a class="headerlink" href="#how-do-data-structures-affect-code-quality" title="Permalink to this headline">¶</a></h2>
 <p>There is tremendous focus in computer science education on technical matters, while almost no attention is paid to how programmers can make code more <em>comprehensible</em>. This isn’t surprising – the knowledge for what a garden-variety human finds clear or obvious tends to live outside the computer science department. In most cases, a psychology professor could tell you far more about the subject than a computer scientist.</p>
 <p>Thus you might hear someone say “this data structure is great because it has <span class="math notranslate nohighlight">\(O(1)\)</span> insertion performance!” but you’ll never hear “this data structure is great because helps our program <em>make sense</em>.” It’s so rare to hear something like that, that you might even wonder how data structure choice can affect comprehension. After all, <a class="reference external" href="https://en.wikipedia.org/wiki/Alexander_Stepanov">Alexander Stepanov</a> largely succeeded at designing completely generic interfaces for containers, so you might think any ugly implementation details can hide safely behind those interfaces.</p>
-<p>Consider, for example, a C++ <code class="docutils literal notranslate"><span class="pre">std::unordered_map</span></code> vs. a <code class="docutils literal notranslate"><span class="pre">std::vector</span></code>. What is the salient difference between the two? If you said something about “big O,” this is technically true, but misses the point.</p>
-<p>One critical difference is pointer stability or, in C++ parlance, when iterators are invalidated (<code class="docutils literal notranslate"><span class="pre">std::unordered-map</span></code> almost never invalidates references to contained elements). The complexity of large software systems is primarily about the complexity of relationships between its many parts. If you can safely capture a pointer or reference to an object because you know it won’t disappear, you can write code that looks like this:</p>
+<p>Consider, for example, a C++ <code class="docutils literal notranslate"><span class="pre">std::unordered_map</span></code> vs. a <code class="docutils literal notranslate"><span class="pre">std::vector</span></code>. What is the salient difference between the two? If you said something about the “big O” of various operations, this is technically true, but misses the point.</p>
+<p>One critical difference is pointer stability or, in C++ parlance, when pointers to contained elements are invalidated (<code class="docutils literal notranslate"><span class="pre">std::unordered-map</span></code> almost never invalidates a reference to a contained element). The complexity of large software systems is primarily about the complexity of relationships between its many parts. If you can safely capture a pointer or reference to an object because you know it won’t disappear, you can write code that looks like this:</p>
 <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">Child</span> <span class="p">{</span>
   <span class="n">Parent</span> <span class="o">*</span><span class="n">p</span><span class="p">;</span>
 <span class="p">}</span>
@@ -256,7 +256,7 @@
   <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">parentIdx</span><span class="p">;</span>
   <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Parent</span><span class="o">&gt;</span> <span class="o">*</span><span class="n">parents</span><span class="p">;</span>
 
-  <span class="n">Parent</span> <span class="o">&amp;</span><span class="n">getParent</span><span class="p">()</span> <span class="k">const</span> <span class="k">noexcept</span> <span class="p">{</span> <span class="k">return</span> <span class="n">parents</span><span class="p">[</span><span class="n">parentIdx</span><span class="p">];</span> <span class="p">}</span>
+  <span class="n">Parent</span> <span class="o">&amp;</span><span class="n">getParent</span><span class="p">()</span> <span class="k">const</span> <span class="k">noexcept</span> <span class="p">{</span> <span class="k">return</span> <span class="p">(</span><span class="o">*</span><span class="n">parents</span><span class="p">)[</span><span class="n">parentIdx</span><span class="p">];</span> <span class="p">}</span>
 <span class="p">};</span>
 </pre></div>
 </div>
@@ -405,11 +405,27 @@
 <h2><a class="toc-backref" href="#id6">Why does it work?</a><a class="headerlink" href="#why-does-it-work" title="Permalink to this headline">¶</a></h2>
 <p>Many of us in the C++ developer community know Sean Parent; he has given a number of well-received talks at various C++ conferences. One theme in his talks is that it is critical to be able to “locally reason about code.” The big question is: do I have to look at <em>one place</em> in the code to understand what’s going on, or do I have to look <em>everywhere</em>. The cost of just <em>finding</em> all the places you’re supposed to look will increase as program size increases, and the comprehension cost will increase much more dramatically. In one of his most popular talks, he emphasizes using value semantics where possible – the lack of reference semantics means no other part the program (no matter how large!) can possibly affect the code we’re looking at.</p>
 <p>I think he’s on to something: it seems that all the comprehension superpowers I know – indentation, value semantics, intrusive lists, etc. – ultimately derive their power from how they enrich a small piece of text with a lot of information.</p>
+<p>Early in the development of BDS, intrusive entry objects did not re-specify the type of linked list they lived in, i.e., code using BDS used to look like this:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">ListItem</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+  <span class="n">bds</span><span class="o">::</span><span class="n">tailq_entry</span> <span class="n">e</span><span class="p">;</span>  <span class="c1">// Note: not a template</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>Later, it was changed to its current form:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">ListItem</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+  <span class="n">bds</span><span class="o">::</span><span class="n">tailq_entry</span><span class="o">&lt;</span><span class="n">ListItem</span><span class="o">&gt;</span> <span class="n">e</span><span class="p">;</span> <span class="c1">// Link us into a list of other ListItems</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>This is redundant, and the template makes the implementation more complex. It was changed because after a long hiatus of not reading any FreeBSD kernel code, I returned to it and discovered that it makes some small difference – in terms of “effortless comprehension” – to see the type of the list locally restated. Look again at the above code listing for the FreeBSD process structure, <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">proc</span></code>. All the entry macros restate that their purpose is to join a <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">proc</span></code> into a data structure containing other <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">proc</span></code> instances, e.g., <code class="docutils literal notranslate"><span class="pre">LIST_ENTRY(proc)</span> <span class="pre">p_list</span></code> for the global process list.</p>
+<p>This is needed in <code class="docutils literal notranslate"><span class="pre">queue(3)</span></code> because of how the implementation works, but it is not strictly necessary in BDS. In the old code, that the <code class="docutils literal notranslate"><span class="pre">e</span></code> member links us into a list of other <code class="docutils literal notranslate"><span class="pre">ListItem</span></code> instances is <em>implicit</em>: we know it’s true because we’re using an intrusive list and by definition, intrusive lists link the kind of objects that contain the intrusive linkage. The old way wasn’t exactly <em>hard</em> to understand without this extra comprehension cue, but it lacked the clarity evident in the <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">proc</span></code> example. This originally went unnoticed because it doesn’t make much of a difference in simple examples, like the one above. As the structures grow larger, it becomes more difficult to keep track of things that are implicit/contextual. As BDS was used more extensively, it became clear that the original <code class="docutils literal notranslate"><span class="pre">queue(3)</span></code> style was better because it improved – in the words of Sean Parent – the “ability to locally reason about code.”</p>
 <p>For what it’s worth, I don’t think Sean Parent would be that enamored of intrusive lists: they are typically reference-heavy structures that point all over the place. That said, I doubt there is much of an alternative. Look at the sheer number of different data structures that a <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">proc</span></code> must simultaneously live in. This number cannot be reduced; the complexity of those relationships is specified by the UNIX process model, which has served us well for decades; it’s a good design we want to keep. Our goal is to create a source code design that helps us “mentally manage” that complexity. Intrusive lists make it possible to see all these relationships together and to draw clear architecture diagrams of how they appear in code. That makes it easier for new engineers to learn that architecture and the kernel code base, ensuring that UNIX continues to march on to victory.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p>At the beginning of this article, I asserted that no one uses intrusive lists because of a sickness at the heart of professional computer programming. You would be forgiven for thinking that this is a ridiculous claim, or a non-sequituer, or just plain clickbait. It is actually true in a “trivial” sense; it is just a consequence of a more important truth.</p>
-<p class="last">The explanation of what ails modern computer programming, as it turns out, isn’t so easy to summarize in a single help section, so it was moved to its own part of the manual page. <em>TODO</em>: add this manual page.</p>
+<p class="last">The explanation of what ails modern computer programming, as it turns out, isn’t so easy to summarize in a single help section, so it was moved to its own part of the manual page. <em>TODO</em>: add this article.</p>
 </div>
 </div>
 </div>
@@ -456,7 +472,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'2018.1-alpha1',
+            VERSION:'2019.1-alpha1',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',

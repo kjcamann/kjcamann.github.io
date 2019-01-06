@@ -97,9 +97,9 @@ There is tremendous focus in computer science education on technical matters, wh
 
 Thus you might hear someone say "this data structure is great because it has :math:`O(1)` insertion performance!" but you'll never hear "this data structure is great because helps our program *make sense*." It's so rare to hear something like that, that you might even wonder how data structure choice can affect comprehension. After all, `Alexander Stepanov <https://en.wikipedia.org/wiki/Alexander_Stepanov>`_ largely succeeded at designing completely generic interfaces for containers, so you might think any ugly implementation details can hide safely behind those interfaces.
 
-Consider, for example, a C++ ``std::unordered_map`` vs. a ``std::vector``. What is the salient difference between the two? If you said something about "big O," this is technically true, but misses the point.
+Consider, for example, a C++ ``std::unordered_map`` vs. a ``std::vector``. What is the salient difference between the two? If you said something about the "big O" of various operations, this is technically true, but misses the point.
 
-One critical difference is pointer stability or, in C++ parlance, when iterators are invalidated (``std::unordered-map`` almost never invalidates references to contained elements). The complexity of large software systems is primarily about the complexity of relationships between its many parts. If you can safely capture a pointer or reference to an object because you know it won't disappear, you can write code that looks like this:
+One critical difference is pointer stability or, in C++ parlance, when pointers to contained elements are invalidated (``std::unordered-map`` almost never invalidates a reference to a contained element). The complexity of large software systems is primarily about the complexity of relationships between its many parts. If you can safely capture a pointer or reference to an object because you know it won't disappear, you can write code that looks like this:
 
 .. code-block:: c++
 
@@ -117,7 +117,7 @@ But if you don't have pointer stability then you *can't* do this. You need to st
      std::size_t parentIdx;
      std::vector<Parent> *parents;
 
-     Parent &getParent() const noexcept { return parents[parentIdx]; }
+     Parent &getParent() const noexcept { return (*parents)[parentIdx]; }
    };
 
 Notice what has happened here. Yes, we are using a vector and we may be rewarded with better performance in other parts of the system (e.g., algorithms that visit all ``Child`` elements). But the *program structure* has also changed. Our data is organized in a different way. It doesn't *look* the same, and it's slighty harder to "see" what's going on. Of course it doesn't matter much: this example is small and more importantly, there is only one relationship (a simple parent/child relationship). But as the number of relationships grows, the "comprehension cost" of the latter approach will grow enormously.
@@ -140,7 +140,7 @@ UNIX processes have a very complex set of relationships among themselves. A proc
 
 The figure below, taken from `The Design and Implementation of the FreeBSD Operating System <https://books.google.com/books?isbn=0321968972>`_, depicts some of the relationship between processes:
 
-.. _lists_freebsd_proc_relationships:
+.. _lists-freebsd-proc-relationships:
 
 .. figure:: images/design-impl-freebsd-proc.png
    :alt: Relationships between processes in the UNIX model
@@ -219,7 +219,7 @@ For example, a process can *be* an orphan (it has linkage into the global list o
 
 Neatly collecting all this information in one well-defined, easy-to-remember place is a comprehension super-power. Not only that, but it is further enhanced by the style of the FreeBSD architectural documentation: there is typically an intimate relationship between the diagrams in the book, and the structure of the code.
 
-Look again at the :ref:`process diagram above <lists_freebsd_proc_relationships>`. Like so many "enterprise architect" diagrams, this picture may appear to be an abstract block diagram which only hints at the relationships between processes -- but it is not. The elegant simplicity of the intrusive lists means that the arrows do not represent some abstract (i.e., hard-to-understand) "relationship." The boxes are instances of ``struct proc`` and the arrows are literally just the linkage pointers in the intrusive lists. The diagram doesn't "suggest" how the data is organized -- it is more like a concrete representation of the in-memory objects.
+Look again at the :ref:`process diagram above <lists-freebsd-proc-relationships>`. Like so many "enterprise architect" diagrams, this picture may appear to be an abstract block diagram which only hints at the relationships between processes -- but it is not. The elegant simplicity of the intrusive lists means that the arrows do not represent some abstract (i.e., hard-to-understand) "relationship." The boxes are instances of ``struct proc`` and the arrows are literally just the linkage pointers in the intrusive lists. The diagram doesn't "suggest" how the data is organized -- it is more like a concrete representation of the in-memory objects.
 
 If you study FreeBSD, you tend to have the following experience: first you read a chapter in the book that explains a high-level concept. Despite being conceptual (there is almost no source code in the book), the relationships between concepts are usually illustrated in a diagram like the one above. Then you pick up the source code. It is usually trivial to discover how the concept is modeled in the code, because despite being written in C, UNIX is a marvel of "object oriented" design: every *concept* gets a *language-level object* (usually a ``struct``) that explicitly models it,  with the same name. It is also trivial to discover how it relates to all the other concepts: there are usually ``queue(3)`` entries to all the structures modeling the related concepts, exactly as they appear in the diagram. You are rarely at a loss to understand where something is defined. Even if all you have is ``grep``, knowing the name of the ``queue(3)`` entry member is usually enough to find all users/modifiers of the relationship.
 
@@ -230,10 +230,32 @@ Many of us in the C++ developer community know Sean Parent; he has given a numbe
 
 I think he's on to something: it seems that all the comprehension superpowers I know -- indentation, value semantics, intrusive lists, etc. -- ultimately derive their power from how they enrich a small piece of text with a lot of information.
 
+Early in the development of BDS, intrusive entry objects did not re-specify the type of linked list they lived in, i.e., code using BDS used to look like this:
+
+.. code-block:: c++
+
+   struct ListItem {
+     int i;
+     bds::tailq_entry e;  // Note: not a template
+   };
+
+Later, it was changed to its current form:
+
+.. code-block:: c++
+
+   struct ListItem {
+     int i;
+     bds::tailq_entry<ListItem> e; // Link us into a list of other ListItems
+   };
+
+This is redundant, and the template makes the implementation more complex. It was changed because after a long hiatus of not reading any FreeBSD kernel code, I returned to it and discovered that it makes some small difference -- in terms of "effortless comprehension" -- to see the type of the list locally restated. Look again at the above code listing for the FreeBSD process structure, ``struct proc``. All the entry macros restate that their purpose is to join a ``struct proc`` into a data structure containing other ``struct proc`` instances, e.g., ``LIST_ENTRY(proc) p_list`` for the global process list.
+
+This is needed in ``queue(3)`` because of how the implementation works, but it is not strictly necessary in BDS. In the old code, that the ``e`` member links us into a list of other ``ListItem`` instances is *implicit*: we know it's true because we're using an intrusive list and by definition, intrusive lists link the kind of objects that contain the intrusive linkage. The old way wasn't exactly *hard* to understand without this extra comprehension cue, but it lacked the clarity evident in the ``struct proc`` example. This originally went unnoticed because it doesn't make much of a difference in simple examples, like the one above. As the structures grow larger, it becomes more difficult to keep track of things that are implicit/contextual. As BDS was used more extensively, it became clear that the original ``queue(3)`` style was better because it improved -- in the words of Sean Parent -- the "ability to locally reason about code."
+
 For what it's worth, I don't think Sean Parent would be that enamored of intrusive lists: they are typically reference-heavy structures that point all over the place. That said, I doubt there is much of an alternative. Look at the sheer number of different data structures that a ``struct proc`` must simultaneously live in. This number cannot be reduced; the complexity of those relationships is specified by the UNIX process model, which has served us well for decades; it's a good design we want to keep. Our goal is to create a source code design that helps us "mentally manage" that complexity. Intrusive lists make it possible to see all these relationships together and to draw clear architecture diagrams of how they appear in code. That makes it easier for new engineers to learn that architecture and the kernel code base, ensuring that UNIX continues to march on to victory.
 
 .. seealso::
 
    At the beginning of this article, I asserted that no one uses intrusive lists because of a sickness at the heart of professional computer programming. You would be forgiven for thinking that this is a ridiculous claim, or a non-sequituer, or just plain clickbait. It is actually true in a "trivial" sense; it is just a consequence of a more important truth.
 
-   The explanation of what ails modern computer programming, as it turns out, isn't so easy to summarize in a single help section, so it was moved to its own part of the manual page. *TODO*: add this manual page.
+   The explanation of what ails modern computer programming, as it turns out, isn't so easy to summarize in a single help section, so it was moved to its own part of the manual page. *TODO*: add this article.

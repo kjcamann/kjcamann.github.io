@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Intrusive Concepts &mdash; BDS 2018.1-alpha1 documentation</title>
+  <title>Intrusive Concepts &mdash; BDS 2019.1-alpha1 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                2018.1
+                2019.1
               </div>
             
           
@@ -177,9 +177,9 @@
 </dd></dl>
 
 <dl class="concept">
-<dt id="_CPPv3I0EN3bds10SizeMemberE">
-<span id="_CPPv2I0EN3bds10SizeMemberE"></span>template&lt;typename <code class="descname">T</code>&gt;<br /><em class="property">concept </em><code class="descclassname">bds<code class="descclassname">::</code></code><code class="descname">SizeMember</code><a class="headerlink" href="#_CPPv3I0EN3bds10SizeMemberE" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>This concept is satisfied when the type is <a class="reference external" href="https://en.cppreference.com/w/cpp/concepts/Integral">Integral</a> type or when it is the special empty struct <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">bds::no_size</span></code>. The intention is to allow containers to either store their size inline (so that <a class="reference external" href="https://en.cppreference.com/w/cpp/iterator/size">std::size</a> will be <span class="math notranslate nohighlight">\(O(1)\)</span>) or to save space and compute it on the fly (but then <a class="reference external" href="https://en.cppreference.com/w/cpp/iterator/size">std::size</a> will be <span class="math notranslate nohighlight">\(O(n)\)</span>). This is usually done by accepting the size type as a template parameter, which is constrained to to be a <code class="docutils literal notranslate"><span class="pre">SizeMember</span></code>. The size member variable itself is usually declared with <a class="reference external" href="https://en.cppreference.com/w/cpp/language/attributes/no_unique_address">[[no_unique_address]]</a>, so that it does not take any space when it is <code class="docutils literal notranslate"><span class="pre">bds::no_size</span></code>.</p>
+<dt id="_CPPv3I0EN3bds14CompressedSizeE">
+<span id="_CPPv2I0EN3bds14CompressedSizeE"></span>template&lt;typename <code class="descname">T</code>&gt;<br /><em class="property">concept </em><code class="descclassname">bds<code class="descclassname">::</code></code><code class="descname">CompressedSize</code><a class="headerlink" href="#_CPPv3I0EN3bds14CompressedSizeE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>This concept is satisfied when the type is <a class="reference external" href="https://en.cppreference.com/w/cpp/concepts/Integral">Integral</a> type or when it is the special empty struct <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">bds::no_size</span></code>. The intention is to allow containers to either store their size inline (so that <a class="reference external" href="https://en.cppreference.com/w/cpp/iterator/size">std::size</a> will be <span class="math notranslate nohighlight">\(O(1)\)</span>) or to save space and compute it on the fly (but then <a class="reference external" href="https://en.cppreference.com/w/cpp/iterator/size">std::size</a> will be <span class="math notranslate nohighlight">\(O(n)\)</span>). This is usually done by accepting the size type as a template parameter, which is constrained to to be a <code class="docutils literal notranslate"><span class="pre">CompressedSize</span></code>. The size member variable itself is usually declared with <a class="reference external" href="https://en.cppreference.com/w/cpp/language/attributes/no_unique_address">[[no_unique_address]]</a>, so that it does not take any space when it is <code class="docutils literal notranslate"><span class="pre">bds::no_size</span></code>.</p>
 </dd></dl>
 
 </div>
@@ -226,7 +226,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'2018.1-alpha1',
+            VERSION:'2019.1-alpha1',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',

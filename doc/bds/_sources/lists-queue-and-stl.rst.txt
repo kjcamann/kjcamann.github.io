@@ -14,7 +14,7 @@ Differences between BDS lists and other STL containers
 
 The primary difference between BDS lists and STL containers is explained briefly in the :ref:`quick start guide <lists-where-are-the-docs>`, namely that BDS lists do not own their objects whereas STL containers do. A BDS "list object" is just a small "list head" structure, containing pointers to the intrusive links to the first (and sometimes last) element of the list items.
 
-.. figure:: images/slist-diagram.png
+.. figure:: images/lists-guide-concept.png
    :alt: slist data structure diagram
 
 Lack of ownership gives rise to many small differences, including:
@@ -33,7 +33,7 @@ Lack of ownership gives rise to many small differences, including:
 
 .. _lists-extra-methods:
 
-Methods in bds lists that do not exist in the STL
+Methods in BDS lists that do not exist in the STL
 -------------------------------------------------
 
 ``iter`` and ``citer``
