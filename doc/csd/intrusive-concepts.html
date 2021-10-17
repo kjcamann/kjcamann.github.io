@@ -1,75 +1,39 @@
-
-
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>Intrusive Concepts &mdash; CSD 2019.1-alpha1 documentation</title>
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Intrusive Concepts &mdash; CSD 2021.1-alpha documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
-  
-  
-  
-
-  
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Intrusive Types" href="intrusive-types.html" />
-    <link rel="prev" title="&lt;csd/intrusive.h&gt; Reference" href="intrusive-reference.html" /> 
+    <link rel="prev" title="Extractors: the Core Intrusive Concept" href="intrusive-extractors.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="index.html" class="icon icon-home"> CSD
-          
-
-          
-            
             <img src="_static/csd-logo.png" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-            
-            
               <div class="version">
-                2019.1
+                2021.1
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -77,163 +41,97 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="lists-main.html">Lists Library</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="utilities-main.html">Utility Libraries</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="intrusive-reference.html"><code class="docutils literal notranslate"><span class="pre">&lt;csd/intrusive.h&gt;</span></code> Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="intrusive-main.html">Intrusive Container Utilities</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="intrusive-extractors.html">Extractors: the Core Intrusive Concept</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Intrusive Concepts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intrusive-types.html">Intrusive Types</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="lists-main.html">Lists Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utility-main.html">Utility Libraries</a></li>
 </ul>
 
-            
-          
         </div>
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">CSD</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="index.html">Docs</a> &raquo;</li>
-        
-          <li><a href="utilities-main.html">Utility Libraries</a> &raquo;</li>
-        
-          <li><a href="intrusive-reference.html"><code class="docutils literal notranslate"><span class="pre">&lt;csd/intrusive.h&gt;</span></code> Reference</a> &raquo;</li>
-        
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="intrusive-main.html">Intrusive Container Utilities</a> &raquo;</li>
       <li>Intrusive Concepts</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-            
             <a href="_sources/intrusive-concepts.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="intrusive-concepts">
-<h1>Intrusive Concepts<a class="headerlink" href="#intrusive-concepts" title="Permalink to this headline">¶</a></h1>
-<dl class="concept">
-<dt id="_CPPv4I0EN3csd9StatelessE">
-<span id="_CPPv3I0EN3csd9StatelessE"></span><span id="_CPPv2I0EN3csd9StatelessE"></span>template&lt;typename <code class="sig-name descname">C</code>&gt;<br /><em class="property">concept </em><code class="sig-prename descclassname">csd<code class="sig-prename descclassname">::</code></code><code class="sig-name descname">Stateless</code><a class="headerlink" href="#_CPPv4I0EN3csd9StatelessE" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>A type is stateless if it is both <a class="reference external" href="https://en.cppreference.com/w/cpp/types/is_empty">empty</a> and <a class="reference external" href="https://en.cppreference.com/w/cpp/types/is_constructible">trivially constructible</a>. Together, these properties ensure that there is no need to store a reference to a specific instance of a stateless class, because constructing a new instance on the fly has no cost and is always equivalent:</p>
+             
+  <section id="intrusive-concepts">
+<h1>Intrusive Concepts<a class="headerlink" href="#intrusive-concepts" title="Permalink to this headline"></a></h1>
+<dl class="cpp concept">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN3csg9statelessE">
+<span id="_CPPv3I0EN3csg9statelessE"></span><span id="_CPPv2I0EN3csg9statelessE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">C</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="k"><span class="pre">concept</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">csg</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">stateless</span></span></span><a class="headerlink" href="#_CPPv4I0EN3csg9statelessE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>A type is stateless if it is <a class="reference external" href="https://en.cppreference.com/w/cpp/types/is_empty">empty</a>, <a class="reference external" href="https://en.cppreference.com/w/cpp/types/is_constructible">trivially constructible</a>, and <a class="reference external" href="https://en.cppreference.com/w/cpp/types/is_destructible">trivially destructible</a>. Together, these properties ensure that there is no need to store a reference to a specific instance of a stateless class, because constructing a new instance on the fly has no cost and is always equivalent:</p>
 <ul class="simple">
 <li><p>Both instances have the same data, because they are both empty</p></li>
-<li><p>The act of constructing the new instance is side-effect-free because the constructor is trivial (and is therefore a no-op that will be optimized away)</p></li>
+<li><p>The creation and destruction of the new instance are side-effect-free because the constructor and destructor are trivial (and are therefore no-ops that will be optimized away)</p></li>
 </ul>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p>The documentation for <a class="reference internal" href="intrusive-types.html#_CPPv4I0DpEN3csd24compressed_invocable_refE" title="csd::compressed_invocable_ref"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">csd::compressed_invocable_ref</span></code></a> contains an explanation of how this is used in CSD.</p>
+<p>The documentation for <a class="reference internal" href="intrusive-types.html#_CPPv4I0DpEN3csg24compressed_invocable_refE" title="csg::compressed_invocable_ref"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">csg::compressed_invocable_ref</span></code></a> contains an explanation of how this is used in CSD.</p>
 </div>
 </dd></dl>
 
-<dl class="concept">
-<dt id="_CPPv4I0EN3csd14CompressedSizeE">
-<span id="_CPPv3I0EN3csd14CompressedSizeE"></span><span id="_CPPv2I0EN3csd14CompressedSizeE"></span>template&lt;typename <code class="sig-name descname">T</code>&gt;<br /><em class="property">concept </em><code class="sig-prename descclassname">csd<code class="sig-prename descclassname">::</code></code><code class="sig-name descname">CompressedSize</code><a class="headerlink" href="#_CPPv4I0EN3csd14CompressedSizeE" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>This concept is satisfied when the type is <a class="reference external" href="https://en.cppreference.com/w/cpp/concepts/Integral">Integral</a> type or when it is the special empty struct <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">csd::no_size</span></code>. The intention is to allow containers to either store their size inline (so that <a class="reference external" href="https://en.cppreference.com/w/cpp/iterator/size">std::size</a> will be <span class="math notranslate nohighlight">\(O(1)\)</span>) or to save space and compute it on the fly (but then <a class="reference external" href="https://en.cppreference.com/w/cpp/iterator/size">std::size</a> will be <span class="math notranslate nohighlight">\(O(n)\)</span>). This is usually done by accepting the size type as a template parameter, which is constrained to to be a <code class="docutils literal notranslate"><span class="pre">CompressedSize</span></code>. The size member variable itself is usually declared with <a class="reference external" href="https://en.cppreference.com/w/cpp/language/attributes/no_unique_address">[[no_unique_address]]</a>, so that it does not take any space when it is <code class="docutils literal notranslate"><span class="pre">csd::no_size</span></code>.</p>
+<dl class="cpp concept">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN3csg13optional_sizeE">
+<span id="_CPPv3I0EN3csg13optional_sizeE"></span><span id="_CPPv2I0EN3csg13optional_sizeE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="k"><span class="pre">concept</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">csg</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">optional_size</span></span></span><a class="headerlink" href="#_CPPv4I0EN3csg13optional_sizeE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>This concept is satisfied when the type is an <a class="reference external" href="https://en.cppreference.com/w/cpp/concepts/integral">integral</a> type or when it is the special empty struct <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">csg::no_size</span></code>. The intention is to allow containers to either store their size inline (so that <a class="reference external" href="https://en.cppreference.com/w/cpp/iterator/size">std::size</a> will be <span class="math notranslate nohighlight">\(O(1)\)</span>) or to save space and compute it on the fly (but then <a class="reference external" href="https://en.cppreference.com/w/cpp/iterator/size">std::size</a> will be <span class="math notranslate nohighlight">\(O(n)\)</span>). This is usually done by accepting the size type as a template parameter, which is constrained to to be an <code class="docutils literal notranslate"><span class="pre">optional_size</span></code>. The size member variable itself is usually declared with <a class="reference external" href="https://en.cppreference.com/w/cpp/language/attributes/no_unique_address">[[no_unique_address]]</a>, so that it does not take any space when it is <code class="docutils literal notranslate"><span class="pre">csg::no_size</span></code>.</p>
 </dd></dl>
 
-</div>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="intrusive-types.html" class="btn btn-neutral float-right" title="Intrusive Types" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="intrusive-reference.html" class="btn btn-neutral float-left" title="&lt;csd/intrusive.h&gt; Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="intrusive-extractors.html" class="btn btn-neutral float-left" title="Extractors: the Core Intrusive Concept" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="intrusive-types.html" class="btn btn-neutral float-right" title="Intrusive Types" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &copy; Copyright 2018, Kenneth Camann
-
-    </p>
+    <p>&#169; Copyright 2018, Kenneth Camann.</p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
-
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

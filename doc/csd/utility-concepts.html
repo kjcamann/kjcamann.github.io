@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Utility Concepts &mdash; CSD 2021.1-alpha documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Utility Libraries" href="utility-main.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> CSD
+            <img src="_static/csd-logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2021.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intrusive-main.html">Intrusive Container Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lists-main.html">Lists Library</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="utility-main.html">Utility Libraries</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Utility Concepts</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CSD</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="utility-main.html">Utility Libraries</a> &raquo;</li>
+      <li>Utility Concepts</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/utility-concepts.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="utility-concepts">
+<h1>Utility Concepts<a class="headerlink" href="#utility-concepts" title="Permalink to this headline"></a></h1>
+<dl class="cpp concept">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN3csg25default_arg_initializableE">
+<span id="_CPPv3I0EN3csg25default_arg_initializableE"></span><span id="_CPPv2I0EN3csg25default_arg_initializableE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="k"><span class="pre">concept</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">csg</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">default_arg_initializable</span></span></span><a class="headerlink" href="#_CPPv4I0EN3csg25default_arg_initializableE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>A type is “default argument initializable” if it is <a class="reference external" href="https://en.cppreference.com/w/cpp/concepts/default_initializable">default initializable</a> and <a class="reference external" href="https://en.cppreference.com/w/cpp/concepts/move_constructible">move constructible</a>. This concept is used to enable constructors that take default arguments having a dependent type. For example, consider this simple hash map:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Key</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span> <span class="nc">Value</span><span class="p">,</span><span class="w"></span>
+<span class="w">          </span><span class="n">hash_function</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="w"> </span><span class="o">&amp;&gt;</span><span class="w"> </span><span class="n">KeyHash</span><span class="p">,</span><span class="w"></span>
+<span class="w">          </span><span class="n">std</span><span class="o">::</span><span class="n">equivalence_relation</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="w"> </span><span class="o">&amp;</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="w"> </span><span class="o">&amp;&gt;</span><span class="w"> </span><span class="n">KeyEqual</span><span class="o">&gt;</span><span class="w"></span>
+<span class="k">class</span> <span class="nc">example_hash_map</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// Constructor overload that allows the user to omit arguments for</span>
+<span class="w">  </span><span class="c1">// KeyHash and/or KeyEqual.</span>
+<span class="w">  </span><span class="n">example_hash_map</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="n">KeyHash</span><span class="w"> </span><span class="n">h</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">KeyHash</span><span class="p">{},</span><span class="w"> </span><span class="n">KeyEqual</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">KeyEqual</span><span class="p">{})</span><span class="w"></span>
+<span class="w">      </span><span class="k">requires</span><span class="w"> </span><span class="n">util</span><span class="o">::</span><span class="n">default_arg_initializable</span><span class="o">&lt;</span><span class="n">KeyHash</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"></span>
+<span class="w">               </span><span class="n">util</span><span class="o">::</span><span class="n">default_arg_initializable</span><span class="o">&lt;</span><span class="n">KeyEqual</span><span class="o">&gt;</span><span class="w"></span>
+<span class="w">  </span><span class="o">:</span><span class="w"> </span><span class="n">m_hash</span><span class="p">{</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">h</span><span class="p">)},</span><span class="w"> </span><span class="n">m_keyeq</span><span class="p">{</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">e</span><span class="p">)}</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+
+<span class="w">   </span><span class="c1">// class body omitted</span>
+
+<span class="k">private</span><span class="o">:</span><span class="w"></span>
+<span class="w">  </span><span class="n">KeyHash</span><span class="w"> </span><span class="n">m_hash</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">KeyEqual</span><span class="w"> </span><span class="n">m_keyeq</span><span class="p">;</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+</pre></div>
+</div>
+<p>The above contains a C++11 modernization of a pattern found in the original C++98 STL, e.g., <a class="reference external" href="https://en.cppreference.com/w/cpp/container/map/map">std::map</a> uses the following constructor overload to spare the user from needing to pass a comparator and an allocator most of the time:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">InputIt</span><span class="o">&gt;</span><span class="w"></span>
+<span class="n">map</span><span class="p">(</span><span class="n">InputIt</span><span class="w"> </span><span class="n">first</span><span class="p">,</span><span class="w"> </span><span class="n">InputIt</span><span class="w"> </span><span class="n">second</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Compare</span><span class="w"> </span><span class="o">&amp;</span><span class="n">comp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Compare</span><span class="p">(),</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Allocator</span><span class="w"> </span><span class="o">&amp;</span><span class="n">alloc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Allocator</span><span class="p">());</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Where the C++98 STL used const-references like <code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">Compare</span> <span class="pre">&amp;compare</span> <span class="pre">=</span> <span class="pre">Compare()</span></code>, we use move semantics instead: there are far more “move-only” types than there are “copy-only” types, and the user can easily get copy semantics by passing an lvalue. For example:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">MyKeyEqualFunctor</span><span class="w"> </span><span class="n">equal</span><span class="p">{</span><span class="n">foo</span><span class="p">};</span><span class="w"></span>
+<span class="n">example_hash_map</span><span class="o">&lt;</span><span class="n">K</span><span class="p">,</span><span class="w"> </span><span class="n">V</span><span class="p">,</span><span class="w"> </span><span class="n">H</span><span class="p">,</span><span class="w"> </span><span class="n">MyKeyEqualFunctor</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m</span><span class="p">{</span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="p">{},</span><span class="w"> </span><span class="n">equal</span><span class="p">};</span><span class="w"></span>
+</pre></div>
+</div>
+<p>In the above code, the user wants the default-constructed hash function and so passes <code class="docutils literal notranslate"><span class="pre">{}</span></code>, an empty initializer list. By the copy/move-elision rules of C++17, this will directly initialize the <code class="docutils literal notranslate"><span class="pre">h</span></code> argument, and the <code class="docutils literal notranslate"><span class="pre">h</span></code> argument will be moved into <code class="docutils literal notranslate"><span class="pre">m_hash</span></code>. On the other hand, <code class="docutils literal notranslate"><span class="pre">equal</span></code> is an l-value. A copy of <code class="docutils literal notranslate"><span class="pre">equal</span></code> will be made to initialize the <code class="docutils literal notranslate"><span class="pre">e</span></code> argument, then <code class="docutils literal notranslate"><span class="pre">e</span></code> will be moved into <code class="docutils literal notranslate"><span class="pre">m_keyeq</span></code>.</p>
+<p>While potentially expensive, a copy is what the user intends here. Note that the const-reference version of this trick (from the C++98 STL) also requires a copy: although binding to the <code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">&amp;</span></code> constructor argument is cheap, we must run the copy constructor to construct the <code class="docutils literal notranslate"><span class="pre">m_keyeq</span></code> member variable inside the map – this cannot be copy-elided.</p>
+<p>The advantage of the modern version is that <em>all</em> copies can be eliminated if the types support it and the constructor arguments are x-values. C++11 rules also give us the ability to skip an argument just by writing <code class="docutils literal notranslate"><span class="pre">{}</span></code> at the call site.</p>
+<p>To support exotic types that are not default initializable or move constructible, typically the class template in question will provide a constructor overload based on the <a class="reference internal" href="#_CPPv4I0EN3csg21can_direct_initializeE" title="csg::can_direct_initialize"><code class="xref cpp cpp-concept docutils literal notranslate"><span class="pre">csg::can_direct_initialize</span></code></a> pattern that can be used instead. The disadvantage of that approach compared to this one is that default arguments cannot be used.</p>
+</dd></dl>
+
+<dl class="cpp concept">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN3csg21can_direct_initializeE">
+<span id="_CPPv3I0EN3csg21can_direct_initializeE"></span><span id="_CPPv2I0EN3csg21can_direct_initializeE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="k"><span class="pre">concept</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">csg</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">can_direct_initialize</span></span></span><a class="headerlink" href="#_CPPv4I0EN3csg21can_direct_initializeE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>This concept has a simple definition:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Arg</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span><span class="w"></span>
+<span class="k">concept</span> <span class="nc">can_direct_initialize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">constructible_from</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">Arg</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+</pre></div>
+</div>
+<p>It is typically used on constructor templates, to check if a single passed-in argument is able to initialize an instance of the needed type. It differs from <a class="reference external" href="https://en.cppreference.com/w/cpp/concepts/constructible_from">std::constructible_from</a> in that the template parameters are in reverse order, so that it can be used to introduce a constrained template parameter for the argument.</p>
+<p>Continuing with the <code class="docutils literal notranslate"><span class="pre">example_hash_map</span></code> example introduced in the <a class="reference internal" href="#_CPPv4I0EN3csg25default_arg_initializableE" title="csg::default_arg_initializable"><code class="xref cpp cpp-concept docutils literal notranslate"><span class="pre">csg::default_arg_initializable</span></code></a> documentation, the following constructor overload demonstrates how this concept is used:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Key</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span> <span class="nc">Value</span><span class="p">,</span><span class="w"></span>
+<span class="w">          </span><span class="n">hash_function</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="w"> </span><span class="o">&amp;&gt;</span><span class="w"> </span><span class="n">KeyHash</span><span class="p">,</span><span class="w"></span>
+<span class="w">          </span><span class="n">std</span><span class="o">::</span><span class="n">equivalence_relation</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="w"> </span><span class="o">&amp;</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Key</span><span class="w"> </span><span class="o">&amp;&gt;</span><span class="w"> </span><span class="n">KeyEqual</span><span class="o">&gt;</span><span class="w"></span>
+<span class="k">class</span> <span class="nc">example_hash_map</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">  </span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="n">util</span><span class="o">::</span><span class="n">can_direct_initialize</span><span class="o">&lt;</span><span class="n">KeyHash</span><span class="o">&gt;</span><span class="w"> </span><span class="n">KeyHashInit</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="n">util</span><span class="o">::</span><span class="n">can_direct_initialize</span><span class="o">&lt;</span><span class="n">KeyEqual</span><span class="o">&gt;</span><span class="w"> </span><span class="n">KeyEqualInit</span><span class="o">&gt;</span><span class="w"></span>
+<span class="w">  </span><span class="n">example_hash_map</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="n">KeyHashInit</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">KeyEqualInit</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="n">e</span><span class="p">)</span><span class="w"></span>
+<span class="w">  </span><span class="o">:</span><span class="w"> </span><span class="n">m_hash</span><span class="p">{</span><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">KeyHashInit</span><span class="o">&gt;</span><span class="p">(</span><span class="n">h</span><span class="p">)},</span><span class="w"> </span><span class="n">m_keyeq</span><span class="p">{</span><span class="n">std</span><span class="o">::</span><span class="n">foward</span><span class="o">&lt;</span><span class="n">KeyEqualInit</span><span class="o">&gt;</span><span class="p">(</span><span class="n">e</span><span class="p">)}</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+
+<span class="w">   </span><span class="c1">// class body omitted</span>
+
+<span class="k">private</span><span class="o">:</span><span class="w"></span>
+<span class="w">  </span><span class="n">KeyHash</span><span class="w"> </span><span class="n">m_hash</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">KeyEqual</span><span class="w"> </span><span class="n">m_keyeq</span><span class="p">;</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Here, <code class="docutils literal notranslate"><span class="pre">KeyHashInit</span></code> and <code class="docutils literal notranslate"><span class="pre">KeyEqualInit</span></code> are the types of arbitrary objects the user has passed, determined through template argument deduction, that are capable of initializing <code class="docutils literal notranslate"><span class="pre">KeyHash</span></code> and <code class="docutils literal notranslate"><span class="pre">KeyEqual</span></code> respectively.</p>
+<p>Constructor overloads that use <a class="reference internal" href="#_CPPv4I0EN3csg21can_direct_initializeE" title="csg::can_direct_initialize"><code class="xref cpp cpp-concept docutils literal notranslate"><span class="pre">csg::can_direct_initialize</span></code></a> tend to be the most “powerful”: they can even work with types that are not default-initializable, move-constructible, or copy-constructible. As long as the type can be direct-initialized by <em>something</em> that is a single argument, that single argument is perfect-forwarded through the <code class="docutils literal notranslate"><span class="pre">example_hash_map</span></code> and the construction happens directly in the member variable.</p>
+<p>When our <code class="docutils literal notranslate"><span class="pre">example_hash_map</span></code> must accept more than one dependent type at construction time, e.g., with <code class="docutils literal notranslate"><span class="pre">KeyHash</span></code> and <code class="docutils literal notranslate"><span class="pre">KeyEqual</span></code> above, we normally prefer a constructor based on <a class="reference internal" href="#_CPPv4I0EN3csg25default_arg_initializableE" title="csg::default_arg_initializable"><code class="xref cpp cpp-concept docutils literal notranslate"><span class="pre">csg::default_arg_initializable</span></code></a> because it allows the user to skip some arguments and use a reasonable default instead. As mentioned above, however, there are some abnormal types that can only work with forwarding construction, so the default argument constructors may be disabled and perfect-forwarding constructors using <a class="reference internal" href="#_CPPv4I0EN3csg21can_direct_initializeE" title="csg::can_direct_initialize"><code class="xref cpp cpp-concept docutils literal notranslate"><span class="pre">csg::can_direct_initialize</span></code></a> must be used instead. The downside of using this more-powerful concept is that default arguments cannot be used: writing a <code class="docutils literal notranslate"><span class="pre">{}</span></code> will cause template argument deduction to fail.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="utility-main.html" class="btn btn-neutral float-left" title="Utility Libraries" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Kenneth Camann.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

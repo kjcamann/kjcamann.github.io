@@ -71,7 +71,7 @@ Although ``erase`` takes a ``const_iterator`` and not a pointer to a list item, 
 
 .. warning::
 
-   Users should be careful with both this feature and with ``iter``/``citer``: there is no cheap way within csd itself to check that an item is actually a member of that list. The ``tailq_entry`` object does *not* record the identity of the list that the item is in; it only stores the instrusive list linkage to neighboring items. An item is "in" a list only because a traversal starting from the head would happen to visit it.
+   Users should be careful with both this feature and with ``iter``/``citer``: there is no cheap way within CSD itself to check that an item is actually a member of that list. The ``tailq_entry`` object does *not* record the identity of the list that the item is in; it only stores the instrusive list linkage to neighboring items. An item is "in" a list only because a traversal starting from the head would happen to visit it.
 
    Because the links are stored directly inside the items, a pointer to an item is all that is needed to construct the iterator type (which simply traverses the links) *whether or not* the link members are actually valid and pointing inside the list in question.
 
@@ -116,7 +116,7 @@ Slightly restructuring the loop would fix the problem:
 
 This works because the list's post-increment operator will advance the iterator (reading the neighbor link immediately), and return a copy of the old iterator for use in the expression. Although the object is no longer accessible at the end of the full expression, the iterator has already been incremented.
 
-Each csd list has a ``for_each_safe`` member function that is similar to the ``std::for_each`` algorithm in ``<algorithm>``, except that it uses the post-increment pattern above, to safely visit the list when the visitor might modify the links. Because the list does not own the items (and therefore the destructor does not destroy them), list items are often destroyed by visiting the items with ``for_each_safe`` and destroying each one. The header ``<csd/list_common.h>`` also defines a ``for_each_safe`` free function. The name comes from the ``FOR_EACH_SAFE`` macro in the original ``queue(3)`` library.
+Each CSD list has a ``for_each_safe`` member function that is similar to the ``std::for_each`` algorithm in ``<algorithm>``, except that it uses the post-increment pattern above, to safely visit the list when the visitor might modify the links. Because the list does not own the items (and therefore the destructor does not destroy them), list items are often destroyed by visiting the items with ``for_each_safe`` and destroying each one. The header ``<csg/core/intrusive.h>`` also defines a ``for_each_safe`` free function, as the need for it is common to all intrusive data structures. The name comes from the ``FOR_EACH_SAFE`` macro in the original ``queue(3)`` library.
 
 ``find_predecessor`` and ``find_erase``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

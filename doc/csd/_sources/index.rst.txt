@@ -7,8 +7,9 @@
    :maxdepth: 2
 
    introduction
+   intrusive-main
    lists-main
-   utilities-main
+   utility-main
 
 Welcome to CSD
 ===============

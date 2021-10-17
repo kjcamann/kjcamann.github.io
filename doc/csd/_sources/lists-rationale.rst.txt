@@ -236,7 +236,7 @@ Early in the development of CSD, intrusive entry objects did not re-specify the 
 
    struct ListItem {
      int i;
-     csd::tailq_entry e;  // Note: not a template
+     tailq_entry e;  // Note: not a template
    };
 
 Later, it was changed to its current form:
@@ -245,7 +245,7 @@ Later, it was changed to its current form:
 
    struct ListItem {
      int i;
-     csd::tailq_entry<ListItem> e; // Link us into a list of other ListItems
+     tailq_entry<ListItem> e; // Link us into a list of other ListItems
    };
 
 This is redundant, and the template makes the implementation more complex. It was changed because after a long hiatus of not reading any FreeBSD kernel code, I returned to it and discovered that it makes some small difference -- in terms of "effortless comprehension" -- to see the type of the list locally restated. Look again at the above code listing for the FreeBSD process structure, ``struct proc``. All the entry macros restate that their purpose is to join a ``struct proc`` into a data structure containing other ``struct proc`` instances, e.g., ``LIST_ENTRY(proc) p_list`` for the global process list.

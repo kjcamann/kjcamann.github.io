@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Extractors: the Core Intrusive Concept &mdash; CSD 2021.1-alpha documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Intrusive Concepts" href="intrusive-concepts.html" />
+    <link rel="prev" title="Intrusive Container Utilities" href="intrusive-main.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> CSD
+            <img src="_static/csd-logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2021.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="intrusive-main.html">Intrusive Container Utilities</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Extractors: the Core Intrusive Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intrusive-concepts.html">Intrusive Concepts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intrusive-types.html">Intrusive Types</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="lists-main.html">Lists Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utility-main.html">Utility Libraries</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CSD</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="intrusive-main.html">Intrusive Container Utilities</a> &raquo;</li>
+      <li>Extractors: the Core Intrusive Concept</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/intrusive-extractors.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="extractors-the-core-intrusive-concept">
+<h1>Extractors: the Core Intrusive Concept<a class="headerlink" href="#extractors-the-core-intrusive-concept" title="Permalink to this headline"></a></h1>
+<p>CSD provides several intrusive containers (<a class="reference internal" href="lists-main.html"><span class="doc">lists</span></a>, hash tables (TODO: link)) and an intrusive smart pointer (TODO: link). To insert an item into an intrusive container, or to use the intrusive smart pointer, a class must provide storage for the intrusive library code to store its internal data. For example, an item inserted into an intrusive list must provide storage for a pointer to the next item.</p>
+<figure class="align-default" id="id4">
+<a class="reference external image-reference" href="_images/lists-extractor-concept.png"><img alt="CSD intrusive objects must be embedded into user objects" src="_images/lists-extractor-concept.png" /></a>
+<figcaption>
+<p><span class="caption-text">A typical CSD intrusive data structure; the user must embed a CSD object (in this case, <code class="docutils literal notranslate"><span class="pre">slist_entry</span></code>) into their own code, for the library to use. <em>Extractors</em> are the concept that enable CSD to find the embedded object.</span><a class="headerlink" href="#id4" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>How does the intrusive library code – located in CSD – know how to find the storage inside a generic type, which is defined in the user’s code? CSD uses two approaches: a more generic approach is used by the containers, and a simpler one is used by the reference-counted smart pointer. In both cases, <em>extractors</em> are the fundamental concept. At the source-code level, an “extractor” is just a tiny C++ <code class="docutils literal notranslate"><span class="pre">concept</span></code> similar to <a class="reference external" href="https://en.cppreference.com/w/cpp/concepts/invocable">std::invocable</a> but with an additional guarantee that the result can bind to a particular reference type:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">F</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span> <span class="nc">R</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span><span class="w"></span>
+<span class="k">concept</span> <span class="nc">extractor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="o">&amp;&gt;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">common_reference_with</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="o">&amp;&gt;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                               </span><span class="n">std</span><span class="o">::</span><span class="n">add_lvalue_reference_t</span><span class="o">&lt;</span><span class="n">R</span><span class="o">&gt;&gt;</span><span class="p">;</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Despite this simplicity, usage of <code class="docutils literal notranslate"><span class="pre">csg::extractor</span></code> in code is meant to convey a deeper semantic meaning that is explained in the rest of this section.</p>
+<section id="extractor-basics">
+<h2>Extractor basics<a class="headerlink" href="#extractor-basics" title="Permalink to this headline"></a></h2>
+<p>As shown in the picture above, intrusive containers are just small “head” objects containing links to the container items. The head object is always a template, and one of the template parameters is an <a class="reference external" href="https://en.cppreference.com/w/cpp/concepts/invocable">std::invocable</a> type, which knows how to extract the intrusive payload from the user’s type.</p>
+<p>Consider the case of a singly-linked list:</p>
+<div class="highlight-c++ notranslate" id="first-intrusive-example"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;csg/core/slist.h&gt;</span><span class="cp"></span>
+
+<span class="k">struct</span> <span class="nc">ListItem</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">;</span><span class="w">                            </span><span class="c1">// List item&#39;s data</span>
+<span class="w">  </span><span class="n">csg</span><span class="o">::</span><span class="n">slist_entry</span><span class="o">&lt;</span><span class="n">ListItem</span><span class="o">&gt;</span><span class="w"> </span><span class="n">link</span><span class="p">;</span><span class="w">  </span><span class="c1">// Intrusive link that makes us part of</span>
+<span class="w">                                    </span><span class="c1">// a `ListItem` singly-linked list</span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="c1">// Define a functor which knows how to extract the link member</span>
+<span class="c1">// from the `ListItem` type.</span>
+<span class="k">struct</span> <span class="nc">GetLink</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="n">csg</span><span class="o">::</span><span class="n">slist_entry</span><span class="o">&lt;</span><span class="n">ListItem</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="k">operator</span><span class="p">()(</span><span class="k">const</span><span class="w"> </span><span class="n">ListItem</span><span class="w"> </span><span class="o">&amp;</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">noexcept</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">i</span><span class="p">.</span><span class="n">link</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="k">using</span><span class="w"> </span><span class="n">list_t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">csg</span><span class="o">::</span><span class="n">slist_head</span><span class="o">&lt;</span><span class="n">ListItem</span><span class="p">,</span><span class="w"> </span><span class="n">GetLink</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Throughout the CSD documentation, an invocable like <code class="docutils literal notranslate"><span class="pre">GetLink</span></code> is referred to as an <em>extractor</em>, a term borrowed from the <a class="reference external" href="https://www.boost.org/doc/libs/1_70_0/libs/multi_index/doc/index.html">Boost Multi-index library</a>.</p>
+<p>In the case of the containers, it is typically called an “entry extractor,” because the object it extracts has “_entry” in the name. For example, the <code class="docutils literal notranslate"><span class="pre">GetLink</span></code> above extracts a <code class="docutils literal notranslate"><span class="pre">csg::slist_entry&lt;ListItem&gt;</span></code>. The term “entry” comes from the original <a class="reference external" href="http://man.openbsd.org/queue">queue(3)</a> C intrusive library from BSD; it is the object that stores the pointers used to link an object into a list, thereby making it an entry in that list.</p>
+<p>It is both annoying and unnecessary to write a boilerplate functor like <code class="docutils literal notranslate"><span class="pre">GetLink</span></code>. Because a pointer-to-data-member can be used with <a class="reference external" href="https://cppreference.com/w/cpp/utility/functional/invoke">std::invoke</a>, we would ideally like to write something like this:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">using</span><span class="w"> </span><span class="n">list_t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">csg</span><span class="o">::</span><span class="n">slist_head</span><span class="o">&lt;</span><span class="n">ListItem</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ListItem</span><span class="o">::</span><span class="n">link</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Unforutantely we cannot do this directly.</p>
+<p>In C++, a template parameter must be either a <em>type</em> parameter, or a <em>non-type</em> parameter (i.e., a compile-time value). To make the library as generic as possible, the extractor parameter of <code class="docutils literal notranslate"><span class="pre">csg::slist_head</span></code> is a <em>type</em>, whereas <code class="docutils literal notranslate"><span class="pre">&amp;ListItem::link</span></code> is a constexpr <em>value</em>.</p>
+<p>To deal with this, a helper template called <code class="docutils literal notranslate"><span class="pre">invocable_constant</span></code> is used to wrap a constexpr invocable in a function-like type:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">auto</span><span class="w"> </span><span class="n">I</span><span class="o">&gt;</span><span class="w"></span>
+<span class="k">struct</span> <span class="nc">invocable_constant</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="k">constexpr</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">I</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">  </span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="p">...</span><span class="w"> </span><span class="n">Ts</span><span class="o">&gt;</span><span class="w"> </span><span class="k">requires</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">invocable</span><span class="o">&lt;</span><span class="k">decltype</span><span class="p">(</span><span class="n">I</span><span class="p">),</span><span class="w"> </span><span class="n">Ts</span><span class="p">...</span><span class="o">&gt;</span><span class="w"></span>
+<span class="w">  </span><span class="k">constexpr</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="k">auto</span><span class="p">)</span><span class="w"> </span><span class="k">operator</span><span class="p">()(</span><span class="n">Ts</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="w"> </span><span class="n">vs</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">noexcept</span><span class="p">(</span><span class="cm">/*details*/</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">invoke</span><span class="p">(</span><span class="n">I</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">Ts</span><span class="o">&gt;</span><span class="p">(</span><span class="n">vs</span><span class="p">)...);</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+</pre></div>
+</div>
+<p>The name <code class="docutils literal notranslate"><span class="pre">invocable_constant</span></code> is similar to the standard library classes, <a class="reference external" href="https://en.cppreference.com/w/cpp/types/integral_constant">integral_constant and bool_constant</a>, which wrap constexpr values into types, so they can be used as template type arguments.</p>
+<p>Now we can define <code class="docutils literal notranslate"><span class="pre">list_t</span></code> as:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">using</span><span class="w"> </span><span class="n">list_t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">csg</span><span class="o">::</span><span class="n">slist_head</span><span class="o">&lt;</span><span class="n">ListItem</span><span class="p">,</span><span class="w"> </span><span class="n">invocable_constant</span><span class="o">&lt;&amp;</span><span class="n">ListItem</span><span class="o">::</span><span class="n">link</span><span class="o">&gt;&gt;</span><span class="p">;</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Because this pattern is common – and because the above is still too verbose – a helper type alias is defined:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">using</span><span class="w"> </span><span class="n">list_t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">csg</span><span class="o">::</span><span class="n">slist_head_cinvoke_t</span><span class="o">&lt;&amp;</span><span class="n">ListItem</span><span class="o">::</span><span class="n">link</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Each container type defines a similar type alias, always ending in “_cinvoke_t”, to help the user refer to a <strong>c</strong>onstexpr <strong>invoke</strong>able <strong>t</strong>ype that wraps a constexpr value like the pointer-to-member above.</p>
+<p>Although the user can provide any <a class="reference external" href="https://en.cppreference.com/w/cpp/concepts/invocable">std::invocable</a> type (including a stateful one), most of the time the user will want a member object pointer, a member function pointer, or a free function taking a single <code class="docutils literal notranslate"><span class="pre">T&amp;</span></code> argument (see the documentation of <a class="reference external" href="https://cppreference.com/w/cpp/utility/functional/invoke">std::invoke</a> for the possibilities). Because references to particular free functions or members are compile-time constants, the “_cinvoke_t” helpers are the most common way to declare a container type in CSD.</p>
+<section id="offsetof-based-extractors">
+<h3><code class="docutils literal notranslate"><span class="pre">offsetof</span></code>-based Extractors<a class="headerlink" href="#offsetof-based-extractors" title="Permalink to this headline"></a></h3>
+<p>Another important class of extractors are the <em>offset extractors</em>: they extract an intrusive payload using the <code class="docutils literal notranslate"><span class="pre">offsetof</span></code> macro and <code class="docutils literal notranslate"><span class="pre">std::bit_cast</span></code>. They are specializations of the template functor <code class="docutils literal notranslate"><span class="pre">offset_extractor</span></code>:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">R</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">Offset</span><span class="o">&gt;</span><span class="w"></span>
+<span class="k">struct</span> <span class="nc">offset_extractor</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="k">constexpr</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">offset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Offset</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">  </span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span> <span class="nc">T</span><span class="o">&gt;</span><span class="w"></span>
+<span class="w">  </span><span class="k">constexpr</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">remove_cvref_t</span><span class="o">&lt;</span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="k">operator</span><span class="p">()(</span><span class="n">T</span><span class="w"> </span><span class="o">&amp;</span><span class="n">t</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">noexcept</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="o">*</span><span class="k">const</span><span class="w"> </span><span class="n">baseAddr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">bit_cast</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">byte</span><span class="w"> </span><span class="o">*&gt;</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">addressof</span><span class="p">(</span><span class="n">t</span><span class="p">));</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="o">*</span><span class="n">std</span><span class="o">::</span><span class="n">bit_cast</span><span class="o">&lt;</span><span class="n">R</span><span class="w"> </span><span class="o">*&gt;</span><span class="p">(</span><span class="n">baseAddr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Offset</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Like <code class="docutils literal notranslate"><span class="pre">invocable_constant</span></code>, manual use of <code class="docutils literal notranslate"><span class="pre">offset_extractor</span></code> is cumbersome. Unfortunately we cannot write a helper alias like <code class="docutils literal notranslate"><span class="pre">slist_head_cinvoke_t</span></code> that simplifies it, because of limitations in the C++ language.</p>
+<p>Instead, we use a helper <em>macro</em>:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">using</span><span class="w"> </span><span class="n">list_t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CSG_SLIST_HEAD_OFFSET_T</span><span class="p">(</span><span class="n">ListItem</span><span class="p">,</span><span class="w"> </span><span class="n">link</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Each container type defines a similar macro, always ending in “_OFFSET_T”, to help the user work with offset extractors. The extractor type itself can be referred to using the macro <code class="docutils literal notranslate"><span class="pre">CSG_OFFSET_EXTRACTOR(Class,</span> <span class="pre">Field)</span></code>. For example, the above definition of <code class="docutils literal notranslate"><span class="pre">list_t</span></code> is shorthand for:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">using</span><span class="w"> </span><span class="n">list_t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">csg</span><span class="o">::</span><span class="n">slist_head</span><span class="o">&lt;</span><span class="n">ListItem</span><span class="p">,</span><span class="w"> </span><span class="n">CSG_OFFSET_EXTRACTOR</span><span class="p">(</span><span class="n">ListItem</span><span class="p">,</span><span class="w"> </span><span class="n">link</span><span class="p">)</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In both the documentation and the code, extractors are referred to as being either “offset extractors” or “invocable extractors.” Yet you may notice that <code class="docutils literal notranslate"><span class="pre">offset_extractor</span></code> is an invocable type. Why aren’t offset extractors considered “invocable”?</p>
+<p>Although <code class="docutils literal notranslate"><span class="pre">offset_extractor</span></code> is a functor, <code class="docutils literal notranslate"><span class="pre">std::invoke</span></code> is <em>not</em> used in its primary task of performing extraction. Instead, various helper classes in the implementation have partial template specializations for <code class="docutils literal notranslate"><span class="pre">offset_extractor</span></code>. These helper classes use a different strategy for offset extractors than for all other extractor types (for details, see the link encoding notes in the <a class="reference internal" href="lists-implementation.html"><span class="doc">implementation notes</span></a>). This is actually the “secret sause” of <code class="docutils literal notranslate"><span class="pre">offset_extractor</span></code> that gives it a slight edge during code generation. <code class="docutils literal notranslate"><span class="pre">offset_extractor</span></code> is modeled as a functor because it simplifies certain other parts of the code.</p>
+</div>
+<section id="when-to-use-offset-based-extractors">
+<span id="intrusive-when-to-use-offset-extractors"></span><h4>When to use offset-based extractors<a class="headerlink" href="#when-to-use-offset-based-extractors" title="Permalink to this headline"></a></h4>
+<p>Offset-based extractors are similar to pointer-to-data-member extractors, but they usually generate better code. Unfortunately, not all types can use them. The C++ standard only guarantees that <code class="docutils literal notranslate"><span class="pre">offsetof</span></code> will work on standard layout types, although since C++17, implementations are free to allow other types. Because of that freedom, CSD does not enforce the standard layout requirement – so users must “know what they’re doing” when using <code class="docutils literal notranslate"><span class="pre">offsetof</span></code>.</p>
+<p>Pointer-to-member-extractors are more powerful, and can solve two problems:</p>
+<ol class="arabic">
+<li><p><strong>Access Protection Problems</strong> – In most C++ compilers, an <code class="docutils literal notranslate"><span class="pre">offsetof(T,</span> <span class="pre">&lt;field&gt;)</span></code> appearing outside of T and where <code class="docutils literal notranslate"><span class="pre">&lt;field&gt;</span></code> is non-public will fail, unless a friend declaration allows access in the scope where <code class="docutils literal notranslate"><span class="pre">offsetof</span></code> appears. This can be fixed by adding a public “getter” method and using that as the extractor, e.g.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ListItem</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">  </span><span class="n">slist_entry</span><span class="o">&lt;</span><span class="n">ListItem</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">getLink</span><span class="p">()</span><span class="w"> </span><span class="k">noexcept</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_link</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="k">private</span><span class="o">:</span><span class="w"></span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">slist_entry</span><span class="o">&lt;</span><span class="n">ListItem</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_link</span><span class="p">;</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="k">using</span><span class="w"> </span><span class="n">list_t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">slist_head_cinvoke_t</span><span class="o">&lt;&amp;</span><span class="n">ListItem</span><span class="o">::</span><span class="n">getLink</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Self-Referential List Heads</strong> –
+The expression <code class="docutils literal notranslate"><span class="pre">offsetof(C,</span> <span class="pre">&lt;member-of-C&gt;)</span></code> is usually invalid when it appears inside the definition of <code class="docutils literal notranslate"><span class="pre">class</span> <span class="pre">C</span></code>. For example, this will not work:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">C</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="n">slist_entry</span><span class="o">&lt;</span><span class="n">C</span><span class="o">&gt;</span><span class="w"> </span><span class="n">link</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">CSG_SLIST_HEAD_OFFSET_T</span><span class="p">(</span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="n">link</span><span class="p">)</span><span class="w"> </span><span class="n">children</span><span class="p">;</span><span class="w"> </span><span class="c1">// Error: C isn&#39;t a complete type</span>
+<span class="p">};</span><span class="w"></span>
+</pre></div>
+</div>
+<p>As far as the author is aware, there is nothing in the C standard that says this cannot work, but none of the popular implementations permit <code class="docutils literal notranslate"><span class="pre">offsetof</span></code> inside a type that is still being defined. However, using a pointer-to-member-based extractor <em>will</em> work, even before the type is complete:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">C</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="n">slist_entry</span><span class="o">&lt;</span><span class="n">C</span><span class="o">&gt;</span><span class="w"> </span><span class="n">link</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">slist_head_cinvoke_t</span><span class="o">&lt;&amp;</span><span class="n">C</span><span class="o">::</span><span class="n">link</span><span class="o">&gt;</span><span class="w"> </span><span class="n">children</span><span class="p">;</span><span class="w"> </span><span class="c1">// OK</span>
+<span class="p">};</span><span class="w"></span>
+</pre></div>
+</div>
+<p>This may seem like an odd use case, but there are several “tree-like” structures like this in the FreeBSD kernel. As one example, a <code class="docutils literal notranslate"><span class="pre">vm_object</span></code> contains a <code class="docutils literal notranslate"><span class="pre">LIST_HEAD</span></code> to its shadow <code class="docutils literal notranslate"><span class="pre">vm_object</span></code> children, as part of the virtual memory copy-on-write feature. There is still one restriction: the expression <code class="docutils literal notranslate"><span class="pre">&amp;C::link</span></code> must appear after the <code class="docutils literal notranslate"><span class="pre">csg::slist_entry_link&lt;C&gt;</span></code> member. If the user does not want to do this, the <a class="reference internal" href="lists-guide.html#lists-head-vs-fwd-head"><span class="std std-ref">proxy</span></a> pattern can be used instead.</p>
+</li>
+</ol>
+<p>Both offset-based and <code class="docutils literal notranslate"><span class="pre">invocable_constant</span></code> extractors are <a class="reference internal" href="intrusive-concepts.html#_CPPv4I0EN3csg9statelessE" title="csg::stateless"><code class="xref cpp cpp-concept docutils literal notranslate"><span class="pre">stateless</span></code></a>, and use no storage in the head object (thanks to a <code class="docutils literal notranslate"><span class="pre">[[no_unique_address]]</span></code> attribute). However, the user is free to use a stateful functor which can perform arbitrarily complex link access.</p>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="intrusive-main.html" class="btn btn-neutral float-left" title="Intrusive Container Utilities" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="intrusive-concepts.html" class="btn btn-neutral float-right" title="Intrusive Concepts" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Kenneth Camann.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
