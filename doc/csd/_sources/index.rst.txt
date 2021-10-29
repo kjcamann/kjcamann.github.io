@@ -7,6 +7,7 @@
    :maxdepth: 2
 
    introduction
+   installation
    intrusive-main
    lists-main
    utility-main

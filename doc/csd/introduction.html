@@ -18,7 +18,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Intrusive Container Utilities" href="intrusive-main.html" />
+    <link rel="next" title="Installation" href="installation.html" />
     <link rel="prev" title="Welcome to CSD" href="index.html" /> 
 </head>
 
@@ -48,6 +48,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#how-do-i-install-csd">How do I install CSD?</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intrusive-main.html">Intrusive Container Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="lists-main.html">Lists Library</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utility-main.html">Utility Libraries</a></li>
@@ -129,8 +130,12 @@
 </section>
 <section id="how-do-i-install-csd">
 <h2>How do I install CSD?<a class="headerlink" href="#how-do-i-install-csd" title="Permalink to this headline"></a></h2>
-<p>CSD is a header-only library, so there is little to do. The one exception is if you enable assertions in the library by <code class="docutils literal notranslate"><span class="pre">#define</span></code>ing <code class="docutils literal notranslate"><span class="pre">CSG_DEBUG_LEVEL</span></code> to <code class="docutils literal notranslate"><span class="pre">1</span></code> via the C preprocessor; in that case, the library will emit calls to an <code class="docutils literal notranslate"><span class="pre">extern</span> <span class="pre">&quot;C&quot;</span></code> free function called <code class="docutils literal notranslate"><span class="pre">csg_assert_function</span></code> which you must provide to the linker. No default definition is provided because the “weak linkage” concept is not portable to Windows. See the <code class="docutils literal notranslate"><span class="pre">driver.cpp</span></code> file in the test suite for an example of a simple assertion function that prints to stderr, then calls <a class="reference external" href="https://en.cppreference.com/w/cpp/error/terminate">std::terminate</a>.</p>
-<p>The included CMake build system is only needed to build the test suite and the Sphinx documentation, but it does include an <code class="docutils literal notranslate"><span class="pre">install</span></code> target which will copy the CSD headers, if you wish to use that. To build the Sphinx documentation, you must also install <a class="reference external" href="https://www.doxygen.org">doxygen</a>, <a class="reference external" href="https://breathe.readthedocs.io">breathe</a>, the <a class="reference external" href="https://sphinx-rtd-theme.readthedocs.io/en/latest">“Read the Docs” Sphinx theme</a>, and <a class="reference external" href="https://www.sphinx-doc.org/en/stable/">Sphinx itself</a>. Building the test suite will use CMake’s <a class="reference external" href="https://cmake.org/cmake/help/latest/module/ExternalProject.html">ExternalProject</a> command to fetch the <a class="reference external" href="https://github.com/catchorg/Catch2">Catch2</a> unit testing framework from Github, so it requires an Internet connection.</p>
+<p>CSD is a header-only library, so there is little to do. However, you should read the <a class="reference external" href="https://kjcamann.github.io/doc/csd/installation.html">installation page</a> if you want to:</p>
+<ul class="simple">
+<li><p>Enable CSD assertions (to catch undefined behavior if you break the API contract)</p></li>
+<li><p>Install the GDB debug pretty printers</p></li>
+<li><p>Build the test suite or the documentation</p></li>
+</ul>
 <dl class="footnote brackets">
 <dt class="label" id="id2"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
 <dd><p>CSD was originally called “BDS” – for “BSD Data Structures” – but the similarity between <em>BSD</em> and <em>BDS</em> made the documentation difficult to read. The old name was also slightly misleading, because a few of the designs come from <a class="reference external" href="https://en.wikipedia.org/wiki/OpenSolaris">OpenSolaris</a> and <a class="reference external" href="https://en.wikipedia.org/wiki/Data_Plane_Development_Kit">DPDK</a>.</p>
@@ -144,7 +149,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="index.html" class="btn btn-neutral float-left" title="Welcome to CSD" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="intrusive-main.html" class="btn btn-neutral float-right" title="Intrusive Container Utilities" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

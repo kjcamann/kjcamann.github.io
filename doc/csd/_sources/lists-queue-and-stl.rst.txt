@@ -67,7 +67,7 @@ Assume ``list_t`` is a tailq in the following code:
    myList.push_front(&L1);
    myList.erase(&L1);
 
-Although ``erase`` takes a ``const_iterator`` and not a pointer to a list item, the pointer is implicitly convertible to a list iterator (via a converting constructor in iterator), as long as the ``EntryAccess`` template argument is stateless (i.e., both empty and trivially constructible). If ``EntryAccess`` is not stateless, the ``iter`` and ``citer`` methods must be used instead.
+Although ``erase`` takes a ``const_iterator`` and not a pointer to a list item, the pointer is implicitly convertible to a list iterator (via a converting constructor in iterator), as long as the ``EntryEx`` template argument is stateless (i.e., both empty and trivially constructible). If ``EntryEx`` is not stateless, the ``iter`` and ``citer`` methods must be used instead.
 
 .. warning::
 

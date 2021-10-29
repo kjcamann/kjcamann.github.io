@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Installation &mdash; CSD 2021.1-alpha documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Intrusive Container Utilities" href="intrusive-main.html" />
+    <link rel="prev" title="Introduction" href="introduction.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> CSD
+            <img src="_static/csd-logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2021.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#enabling-assertions">Enabling assertions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-the-gdb-pretty-printers">Installing the GDB pretty-printers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#building-tests-and-documentation">Building tests and documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="intrusive-main.html">Intrusive Container Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lists-main.html">Lists Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utility-main.html">Utility Libraries</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CSD</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Installation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/installation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h1>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#enabling-assertions" id="id1">Enabling assertions</a></p></li>
+<li><p><a class="reference internal" href="#installing-the-gdb-pretty-printers" id="id2">Installing the GDB pretty-printers</a></p>
+<ul>
+<li><p><a class="reference internal" href="#option-1-always-load-the-csd-pretty-printers" id="id3">Option 1: always load the CSD pretty-printers</a></p></li>
+<li><p><a class="reference internal" href="#option-2-use-gdb-s-python-auto-loading-features" id="id4">Option 2: use GDB’s Python auto-loading features</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#building-tests-and-documentation" id="id5">Building tests and documentation</a></p></li>
+</ul>
+</div>
+<p>CSD is a header-only library, so no explicit build step is needed to use it. However, there are a few useful extra features that need explicit configuration, as described below.</p>
+<section id="enabling-assertions">
+<span id="install-assertions"></span><h2><a class="toc-backref" href="#id1">Enabling assertions</a><a class="headerlink" href="#enabling-assertions" title="Permalink to this headline"></a></h2>
+<p>CSD containers are modeled after the STL, and STL containers do not throw exceptions when their API contract is violated. For example, the cppreference documentation for <a class="reference external" href="https://en.cppreference.com/w/cpp/container/list/erase">std::list&lt;T&gt;::erase(iterator pos)</a> states that:</p>
+<blockquote>
+<div><p>The iterator pos must be valid and dereferenceable</p>
+</div></blockquote>
+<p>and it also shows that the <code class="docutils literal notranslate"><span class="pre">Exceptions</span></code> thrown are <code class="docutils literal notranslate"><span class="pre">(none)</span></code>. Moreover, this non-throwing design decision is explicitly specified in the C++ standard. So what happens if the user violates the API contract and passes an invalid iterator to <code class="docutils literal notranslate"><span class="pre">erase</span></code>? Unsurprisingly, the effect is undefined.</p>
+<p>Some C++ standard library implementations, e.g. LLVM’s libc++, contain assertion macros to check for incorrect usage by the caller. For example:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">_LIBCPP_ASSERT</span><span class="p">(</span><span class="n">__p</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">end</span><span class="p">(),</span><span class="w"></span>
+<span class="w">        </span><span class="s">&quot;list::erase(iterator) called with a non-dereferenceable iterator&quot;</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+<p>For performance reasons these checks are not compiled by default but can (and should) be enabled in debug builds to catch contract violations.</p>
+<p>CSG borrows this design from libc++, which the user must opt into by doing two things:</p>
+<ol class="arabic simple">
+<li><p>You must <code class="docutils literal notranslate"><span class="pre">#define</span></code> the macro <code class="docutils literal notranslate"><span class="pre">CSG_DEBUG_LEVEL</span></code> to <code class="docutils literal notranslate"><span class="pre">1</span></code> via the C preprocessor, otherwise assertions will be ignored.</p></li>
+<li><p>You must provide a free function called <code class="docutils literal notranslate"><span class="pre">csg_assert_function</span></code> which will be called when an assertion fails. An example of this function is shown below.</p></li>
+</ol>
+<p>When <code class="docutils literal notranslate"><span class="pre">CSG_DEBUG_LEVEL</span> <span class="pre">==</span> <span class="pre">1</span></code>, the internal macro <code class="docutils literal notranslate"><span class="pre">CSG_ASSERT</span></code> will emit calls to <code class="docutils literal notranslate"><span class="pre">csg_assert_function</span></code>, which is declared but not defined in the CSG header files. No default definition is provided because the “weak linkage” concept is not portable to Windows and it is relatively easy to implement in any case. A simple implementation that prints the violation to stderr and then calls <a class="reference external" href="https://en.cppreference.com/w/cpp/error/terminate">std::terminate</a> is shown below:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">extern</span><span class="w"> </span><span class="s">&quot;C&quot;</span><span class="w"> </span><span class="p">[[</span><span class="n">noreturn</span><span class="p">]]</span><span class="w"> </span><span class="kt">void</span><span class="w"></span>
+<span class="n">csg_assert_function</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">csg</span><span class="o">::</span><span class="n">assert_info</span><span class="w"> </span><span class="o">&amp;</span><span class="n">info</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">format</span><span class="p">,</span><span class="w"> </span><span class="p">...)</span><span class="w"> </span><span class="k">noexcept</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;assertion failed: %s &lt;%s@%s:%d&gt;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">info</span><span class="p">.</span><span class="n">test</span><span class="p">,</span><span class="w"></span>
+<span class="w">              </span><span class="n">info</span><span class="p">.</span><span class="n">function</span><span class="p">,</span><span class="w"> </span><span class="n">info</span><span class="p">.</span><span class="n">file</span><span class="p">,</span><span class="w"> </span><span class="n">info</span><span class="p">.</span><span class="n">line</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">format</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;cause: &quot;</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="kt">va_list</span><span class="w"> </span><span class="n">args</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">va_start</span><span class="p">(</span><span class="n">args</span><span class="p">,</span><span class="w"> </span><span class="n">format</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vfprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span><span class="w"> </span><span class="n">format</span><span class="p">,</span><span class="w"> </span><span class="n">args</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">va_end</span><span class="p">(</span><span class="n">args</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">terminate</span><span class="p">();</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+</section>
+<section id="installing-the-gdb-pretty-printers">
+<span id="install-gdbvis"></span><h2><a class="toc-backref" href="#id2">Installing the GDB pretty-printers</a><a class="headerlink" href="#installing-the-gdb-pretty-printers" title="Permalink to this headline"></a></h2>
+<p>CSD includes a GDB pretty-printer extension to improve the formatting of its types. Like all GDB extensions, pretty-printers are implemented as Python plugins. The CSD pretty-printer functionality is contained in a single file, <code class="docutils literal notranslate"><span class="pre">utils/gdb-printers/csd.py</span></code>. To use it, you must import this Python module and call the function <code class="docutils literal notranslate"><span class="pre">register_csd_pretty_printers()</span></code>. Two options for doing this automatically are described below.</p>
+<section id="option-1-always-load-the-csd-pretty-printers">
+<h3><a class="toc-backref" href="#id3">Option 1: always load the CSD pretty-printers</a><a class="headerlink" href="#option-1-always-load-the-csd-pretty-printers" title="Permalink to this headline"></a></h3>
+<p>If you are a heavy user of CSD, you can add the following Python code directly to your <code class="docutils literal notranslate"><span class="pre">.gdbinit</span></code> file:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">python</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;&lt;path-to-directory-containing-csd.py&gt;&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">csd</span> <span class="kn">import</span> <span class="n">register_csd_pretty_printers</span>
+<span class="n">register_csd_pretty_printers</span><span class="p">()</span>
+
+<span class="n">end</span>
+</pre></div>
+</div>
+<p>This will register the CSD pretty-printers every time you start <code class="docutils literal notranslate"><span class="pre">gdb</span></code>.</p>
+</section>
+<section id="option-2-use-gdb-s-python-auto-loading-features">
+<h3><a class="toc-backref" href="#id4">Option 2: use GDB’s Python auto-loading features</a><a class="headerlink" href="#option-2-use-gdb-s-python-auto-loading-features" title="Permalink to this headline"></a></h3>
+<p>GDB offers a number of ways to automatically load Python extensions that you associate with particular executables or shared libraries. The project’s documentation on <a class="reference external" href="https://sourceware.org/gdb/onlinedocs/gdb/Python-Auto_002dloading.html#Python-Auto_002dloading">Python auto-loading</a> explains these, but the easiest way is shown below.</p>
+<p>Suppose you have an executable <code class="docutils literal notranslate"><span class="pre">foo</span></code> that uses CSD. Create a file called <code class="docutils literal notranslate"><span class="pre">foo-gdb.py</span></code> in the same directory as <code class="docutils literal notranslate"><span class="pre">foo</span></code>, with these contents:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;&lt;path-to-directory-containing-csd.py&gt;&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">csd</span> <span class="kn">import</span> <span class="n">register_csd_pretty_printers</span>
+<span class="n">register_csd_pretty_printers</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Now GDB will automatically load the pretty-printers when <code class="docutils literal notranslate"><span class="pre">foo</span></code> is loaded. This also works for shared libraries (e.g., with a filename like <code class="docutils literal notranslate"><span class="pre">libbar.so-gdb.py</span></code>). The user should be aware that by default, GDB auto-loading is restricted for security reasons. Unless you’ve explicitly relaxed GDB’s security security settings, you’ll need to add a line like this to your <code class="docutils literal notranslate"><span class="pre">.gdbinit</span></code>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>add-auto-load-safe-path &lt;path-to-foo-gdb.py&gt;
+</pre></div>
+</div>
+<p>Note that the autoload safe path can be the path to the file itself or – for more flexibility and less safety – to any of its parent directories.</p>
+</section>
+</section>
+<section id="building-tests-and-documentation">
+<span id="install-cmake"></span><h2><a class="toc-backref" href="#id5">Building tests and documentation</a><a class="headerlink" href="#building-tests-and-documentation" title="Permalink to this headline"></a></h2>
+<p>The included CMake build system is used to build the test suite and the Sphinx documentation. You can also use the <code class="docutils literal notranslate"><span class="pre">install</span></code> target to copy the CSD headers into an appropriate location. To build the Sphinx documentation, you must also install <a class="reference external" href="https://www.doxygen.org">doxygen</a>, <a class="reference external" href="https://breathe.readthedocs.io">breathe</a>, the <a class="reference external" href="https://sphinx-rtd-theme.readthedocs.io/en/latest">“Read the Docs” Sphinx theme</a>, and <a class="reference external" href="https://www.sphinx-doc.org/en/stable/">Sphinx itself</a>. Building the test suite will use CMake’s <a class="reference external" href="https://cmake.org/cmake/help/latest/module/ExternalProject.html">ExternalProject</a> command to fetch the <a class="reference external" href="https://github.com/catchorg/Catch2">Catch2</a> unit testing framework from Github, so it requires an Internet connection.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="introduction.html" class="btn btn-neutral float-left" title="Introduction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="intrusive-main.html" class="btn btn-neutral float-right" title="Intrusive Container Utilities" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Kenneth Camann.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

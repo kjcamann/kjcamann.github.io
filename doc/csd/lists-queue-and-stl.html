@@ -44,6 +44,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intrusive-main.html">Intrusive Container Utilities</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="lists-main.html">Lists Library</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="lists-guide.html">Lists Quick Start Guide</a></li>
@@ -144,7 +145,7 @@
 <span class="n">myList</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="o">&amp;</span><span class="n">L1</span><span class="p">);</span><span class="w"></span>
 </pre></div>
 </div>
-<p>Although <code class="docutils literal notranslate"><span class="pre">erase</span></code> takes a <code class="docutils literal notranslate"><span class="pre">const_iterator</span></code> and not a pointer to a list item, the pointer is implicitly convertible to a list iterator (via a converting constructor in iterator), as long as the <code class="docutils literal notranslate"><span class="pre">EntryAccess</span></code> template argument is stateless (i.e., both empty and trivially constructible). If <code class="docutils literal notranslate"><span class="pre">EntryAccess</span></code> is not stateless, the <code class="docutils literal notranslate"><span class="pre">iter</span></code> and <code class="docutils literal notranslate"><span class="pre">citer</span></code> methods must be used instead.</p>
+<p>Although <code class="docutils literal notranslate"><span class="pre">erase</span></code> takes a <code class="docutils literal notranslate"><span class="pre">const_iterator</span></code> and not a pointer to a list item, the pointer is implicitly convertible to a list iterator (via a converting constructor in iterator), as long as the <code class="docutils literal notranslate"><span class="pre">EntryEx</span></code> template argument is stateless (i.e., both empty and trivially constructible). If <code class="docutils literal notranslate"><span class="pre">EntryEx</span></code> is not stateless, the <code class="docutils literal notranslate"><span class="pre">iter</span></code> and <code class="docutils literal notranslate"><span class="pre">citer</span></code> methods must be used instead.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Users should be careful with both this feature and with <code class="docutils literal notranslate"><span class="pre">iter</span></code>/<code class="docutils literal notranslate"><span class="pre">citer</span></code>: there is no cheap way within CSD itself to check that an item is actually a member of that list. The <code class="docutils literal notranslate"><span class="pre">tailq_entry</span></code> object does <em>not</em> record the identity of the list that the item is in; it only stores the instrusive list linkage to neighboring items. An item is “in” a list only because a traversal starting from the head would happen to visit it.</p>

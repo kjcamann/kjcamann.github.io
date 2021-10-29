@@ -44,6 +44,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intrusive-main.html">Intrusive Container Utilities</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="lists-main.html">Lists Library</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Lists Quick Start Guide</a></li>
@@ -117,7 +118,7 @@
 <dd class="field-odd"><p>Singly-linked lists</p>
 </dd>
 <dt class="field-even">stailq</dt>
-<dd class="field-even"><p>Singly-linked tail queues; a “tail queue” is a list that keeps track of the last element, which allows fast insertion at the end of the list and fast list concatenation</p>
+<dd class="field-even"><p>Singly-linked tail queues; a “tail queue” is a linked list that keeps track of the last element, which allows fast insertion at the end of the list and fast list concatenation; the combination of <span class="math notranslate nohighlight">\(O(1)\)</span> insertion at the end of the list and <span class="math notranslate nohighlight">\(O(1)\)</span> removal from the head of the list makes it easy to implement a classic FIFO queue data structure, thus the name “tail queue”</p>
 </dd>
 <dt class="field-odd">tailq</dt>
 <dd class="field-odd"><p>Doubly-linked tail queues, i.e., doubly-linked lists that also have the tail queue features</p>

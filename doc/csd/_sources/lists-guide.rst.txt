@@ -18,7 +18,7 @@ CSD provides the four data structures from ``queue(3)``:
 
 :slist: Singly-linked lists
 
-:stailq: Singly-linked tail queues; a "tail queue" is a list that keeps track of the last element, which allows fast insertion at the end of the list and fast list concatenation
+:stailq: Singly-linked tail queues; a "tail queue" is a linked list that keeps track of the last element, which allows fast insertion at the end of the list and fast list concatenation; the combination of :math:`O(1)` insertion at the end of the list and :math:`O(1)` removal from the head of the list makes it easy to implement a classic FIFO queue data structure, thus the name "tail queue"
 
 :tailq: Doubly-linked tail queues, i.e., doubly-linked lists that also have the tail queue features
 

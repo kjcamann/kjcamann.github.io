@@ -108,7 +108,7 @@ The singly-linked list design is straight-forward: a head entry points to the fi
 
 .. _lists-tailq-circular-design:
 
-The ``tailq``'s doubly-linked list design is insipred by the `std::list <https://github.com/llvm-mirror/libcxx/blob/master/include/list>`_ implementation in libc++. In this design, the list is actually circular: the ``tailq_entry`` in the list head links the two ends of the list, and corresponds to the ``end()`` sentinel. Its "previous" link points to the last item in the list, and its "next" item points back around to the first item in the list. This is shown in the figure below, which also illustrates the tagged pointers in the ``invocable_tagged_ref`` encoding:
+The ``tailq``'s doubly-linked list design is insipred by the `std::list <https://github.com/llvm-mirror/libcxx/blob/master/include/list>`_ implementation in libc++. In this design, the list is actually circular: the ``tailq_entry`` in the list head links the two ends of the list, and corresponds to the ``end()`` sentinel. [#circular-lists]_ Its "previous" link points to the last item in the list, and its "next" item points back around to the first item in the list. This is shown in the figure below, which also illustrates the tagged pointers in the ``invocable_tagged_ref`` encoding:
 
 .. _lists-tailq-invocable-figure:
 
@@ -171,3 +171,5 @@ It is because CSD copies LLVM's style: its normal style is camelCase, but for co
 .. rubric:: Footnotes
 
 .. [#lists-container-of] Several popular C codebases contain a special macro that does this "inverse offsetof" operation to obtain the original structure address from one of the members. It is usually spelled ``container_of``.
+
+.. [#circular-lists] This kind of circular linked list is also described in the classic algorithms textbook `Introduction to Algorithms <https://en.wikipedia.org/wiki/Introduction_to_Algorithms>`_ (commonly refered to as "CLRS") in section 10.2, "Sentinels", when discussing linked lists.
