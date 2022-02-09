@@ -49,11 +49,21 @@ A simple example
    // intrusive links inside the list items (in this case, via using
    // a pointer-to-data-member access). Because this template is somewhat
    // verbose, a number of helper macros and type aliases are available;
-   // these are explained later in the documentation.
+   // one of these is shown immediately below and the rest of them are
+   // explained later in the documentation.
    using list_t = slist_head<
      ListItem,                               // Type of items in list
-     invocable_constant<&ListItem::link>,    // How to access list links
+     invocable_constant<&ListItem::link>,    // Functor to access list links
      std::size_t>;                           // Type for `size()`
+
+   // `slist_head_cinvoke_t` is an alias template that expands to the same
+   // definition above, so you would normally write this instead. It is
+   // syntactic sugar for the case where your intrusive link can be
+   // accessed via a constexpr invocable (thus "cinvoke"), such as a data
+   // member access or a "getter" member function. This helper alias wraps
+   // your invocable NTTP inside a functor, and you also don't need to
+   // write "ListItem" twice.
+   using list_t = slist_head_cinvoke_t<&ListItem::link, std::size_t>;
 
    // Create an empty list and two items, then add the items to the list.
    list_t L;
@@ -86,7 +96,7 @@ However, because CSD lists are intrusive and because they follow the BSD data st
    :alt: CSD slist datastructure diagram
    :target: _images/lists-guide-concept.png
 
-   A CSD list object is little more than a pointer to the intial item; the items are *not* owned by the list, they are only linked into it (click to enlarge).
+   A CSD list object is little more than a pointer to the initial item; the items are *not* owned by the list, they are only linked into it (click to enlarge).
 
 Compare this with node-based lists, like ``std::forward_list``, which own their elements and store them in "node" containers that are allocated by the list itself. One possible implementation of this design is illustrated below:
 
@@ -103,6 +113,7 @@ This fundamental difference gives rise to a variety of smaller API differences, 
 * As a consequence of the above, list items are always inserted *by pointer*, i.e., for a list of type ``T``, the insert family of functions require a ``T*`` value. To avoid breaking with the standard containers too much, all *non-insertion* member functions continue to use ``T&``, e.g., ``front()`` and ``back()`` continue to return a reference to the item, not a pointer to it.
 * A list item cannot be added to multiple lists that use the same entry link.
 * The list destructor doesn't actually destroy the items (because it does not own them).
+* As a result of this non-ownership, CSD lists are both `borrowed ranges <https://en.cppreference.com/w/cpp/ranges/borrowed_range>`_ and `non-copyable views <https://en.cppreference.com/w/cpp/ranges/view>`_.
 
 CSD lists also provide some useful APIs which are not in the standard containers -- see :ref:`lists-extra-methods`.
 
@@ -124,7 +135,7 @@ Choosing the EntryEx parameter
 
 All intrusive data structures in CSD are parameterized by a template parameter called an *extractor* -- in this case an **Entry Ex**\ tractor -- that knows how to extract the intrusive book-keeping object from the user's type.
 
-Extractors are covered in detail in :doc:`intrusive-extractors`. That document explains the rationale for extractors and gives advice on how to define them. Below we cover the most common "syntactic sugar" way to declare the two main types of extractors: ``offsetof``-based and ``invocable_constant``-based.
+Extractors are covered in detail in :doc:`intrusive-extractors`. That document explains the rationale for extractors and gives advice on how to define them. If you are new CSD intrusive data structures, you should read that section first. Below we cover the most common "syntactic sugar" way to declare the two main types of extractors: ``offsetof``-based and ``invocable_constant``-based.
 
 Syntactic sugar for declaring extractors
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

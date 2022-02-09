@@ -86,15 +86,15 @@
 <h1>Why Intrusive Lists?<a class="headerlink" href="#why-intrusive-lists" title="Permalink to this headline"></a></h1>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#linked-lists-aren-t-those-maddeningly-slow-data-structures" id="id2">Linked lists? Aren’t those maddeningly slow data structures?</a></p></li>
-<li><p><a class="reference internal" href="#what-makes-code-good" id="id3">What makes code “good”?</a></p></li>
-<li><p><a class="reference internal" href="#how-do-data-structures-affect-code-quality" id="id4">How do data structures affect code quality?</a></p></li>
-<li><p><a class="reference internal" href="#an-example-the-freebsd-process-tree" id="id5">An example: the FreeBSD process tree</a></p></li>
-<li><p><a class="reference internal" href="#why-does-it-work" id="id6">Why does it work?</a></p></li>
+<li><p><a class="reference internal" href="#linked-lists-aren-t-those-maddeningly-slow-data-structures" id="id4">Linked lists? Aren’t those maddeningly slow data structures?</a></p></li>
+<li><p><a class="reference internal" href="#what-makes-code-good" id="id5">What makes code “good”?</a></p></li>
+<li><p><a class="reference internal" href="#how-do-data-structures-affect-code-quality" id="id6">How do data structures affect code quality?</a></p></li>
+<li><p><a class="reference internal" href="#an-example-the-freebsd-process-tree" id="id7">An example: the FreeBSD process tree</a></p></li>
+<li><p><a class="reference internal" href="#why-does-it-work" id="id8">Why does it work?</a></p></li>
 </ul>
 </div>
 <section id="linked-lists-aren-t-those-maddeningly-slow-data-structures">
-<h2><a class="toc-backref" href="#id2">Linked lists? Aren’t those maddeningly slow data structures?</a><a class="headerlink" href="#linked-lists-aren-t-those-maddeningly-slow-data-structures" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id4">Linked lists? Aren’t those maddeningly slow data structures?</a><a class="headerlink" href="#linked-lists-aren-t-those-maddeningly-slow-data-structures" title="Permalink to this headline"></a></h2>
 <p>You can find many blogs showing that <code class="docutils literal notranslate"><span class="pre">std::list</span></code> performance is terrible compared to more popular choices. Even worse, Bjarne himself says that the “default advice is to <a class="reference external" href="http://www.stroustrup.com/bs_faq.html#list">prefer to std::vector</a>.” What hope is there for lists, let alone intrusive lists? Do they have any place in the modern programming world, aside from “white board” parlor tricks during your job interview at the local spaghetti-code factory?</p>
 <p>If you’ve mentally written off lists, at least ponder the following:</p>
 <blockquote>
@@ -102,10 +102,12 @@
 </div></blockquote>
 <p>I’ve heard many people who don’t know the answer try to guess at it. “The code base is so old,” they say, “it probably predates the <a class="reference external" href="https://en.wikipedia.org/wiki/Random-access_memory#Memory_wall">memory wall</a>! If they rewrote it today, the whole thing would be vectors!”</p>
 <p>No, it would not.</p>
-<p>The real answer is deeper than you might think – so deep that it goes right to the heart of the dysfunction in modern computer programming.</p>
+<p>There are actually two different reasons. The first is <em>stylistic</em> rather than technical: intrusive data structures end up making large codebases “easier to understand.” Put simply, they help make your code “good” when used correctly.</p>
+<p>The second reason is deeper than you might think – so deep that it goes right to the heart of the dysfunction in modern computer programming. Intrusive data structure design provides a clean way to place an object in multiple containers at once, allowing them to clearly model complex relationships. The “dysfunction” spoken about above is that most programmers do not know <em>any</em> good design patterns for how to model complex relationships, and thus fall into one of several classic anti-patterns which plauge many pieces of software. <a class="footnote-reference brackets" href="#id2" id="id1">1</a> The judicious use of intrusive data structures can prevent this.</p>
+<p>To be more accurate, these are not really two different reasons but a “what?” and a “how?”. Clean modeling of complex relationships is <em>what</em> intrusive data structures do for you. <em>How</em> they end up being “cleaner” is a consequence of the code style they naturally foster.</p>
 </section>
 <section id="what-makes-code-good">
-<h2><a class="toc-backref" href="#id3">What makes code “good”?</a><a class="headerlink" href="#what-makes-code-good" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id5">What makes code “good”?</a><a class="headerlink" href="#what-makes-code-good" title="Permalink to this headline"></a></h2>
 <blockquote class="epigraph">
 <div><p>The art of programming is the art of organizing complexity, of mastering multitude and avoiding its bastard chaos as effectively as possible.
 – Edsger Dijkstra</p>
@@ -162,7 +164,7 @@
 <p>Thus, quality <em>source</em> code is primarily about <em>understanding how to make ideas clear and obvious to a human</em>. This isn’t just an “important dimension” of code quality, <strong>it is literally the only reason why we use programming languages at all</strong>. Yet sadly, most programmers are bad at it – their own code makes sense <em>to them</em> (at least for the moment) so why waste time trying to be clear?</p>
 </section>
 <section id="how-do-data-structures-affect-code-quality">
-<h2><a class="toc-backref" href="#id4">How do data structures affect code quality?</a><a class="headerlink" href="#how-do-data-structures-affect-code-quality" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id6">How do data structures affect code quality?</a><a class="headerlink" href="#how-do-data-structures-affect-code-quality" title="Permalink to this headline"></a></h2>
 <p>There is tremendous focus in computer science education on technical matters, while almost no attention is paid to how programmers can make code more <em>comprehensible</em>. This isn’t surprising – the knowledge for what a garden-variety human finds clear or obvious tends to live outside the computer science department. In most cases, a psychology professor could tell you far more about the subject than a computer scientist.</p>
 <p>Thus you might hear someone say “this data structure is great because it has <span class="math notranslate nohighlight">\(O(1)\)</span> insertion performance!” but you’ll never hear “this data structure is great because helps our program <em>make sense</em>.” It’s so rare to hear something like that, that you might even wonder how data structure choice can affect comprehension. After all, <a class="reference external" href="https://en.wikipedia.org/wiki/Alexander_Stepanov">Alexander Stepanov</a> largely succeeded at designing completely generic interfaces for containers, so you might think any ugly implementation details can hide safely behind those interfaces.</p>
 <p>Consider, for example, a C++ <code class="docutils literal notranslate"><span class="pre">std::unordered_map</span></code> vs. a <code class="docutils literal notranslate"><span class="pre">std::vector</span></code>. What is the salient difference between the two? If you said something about the “big O” of various operations, this is technically true, but misses the point.</p>
@@ -186,7 +188,7 @@
 <p>The real power of the intrusive list is that it makes code look more like the first example. As we’ll demonstrate with a real example in the next section, the fact that the links are intrusive has a profound impact on how the code is organized and especially on how you read it. All of this makes almost no difference on a technical level. Yes the cache locality can be worse than <code class="docutils literal notranslate"><span class="pre">std::vector</span></code>. Outside of micro-benchmarks, the negative cache effects are usually unimportant.</p>
 </section>
 <section id="an-example-the-freebsd-process-tree">
-<h2><a class="toc-backref" href="#id5">An example: the FreeBSD process tree</a><a class="headerlink" href="#an-example-the-freebsd-process-tree" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id7">An example: the FreeBSD process tree</a><a class="headerlink" href="#an-example-the-freebsd-process-tree" title="Permalink to this headline"></a></h2>
 <p>UNIX processes have a very complex set of relationships among themselves. A process has:</p>
 <ul class="simple">
 <li><p>An entry in the process table (the global list of all processes)</p></li>
@@ -199,10 +201,10 @@
 <li><p>A “reap-list” of associated zombies if the process is acting as a reaper for its sub-tree</p></li>
 </ul>
 <p>The figure below, taken from <a class="reference external" href="https://books.google.com/books?isbn=0321968972">The Design and Implementation of the FreeBSD Operating System</a>, depicts some of the relationship between processes:</p>
-<figure class="align-default" id="id1">
+<figure class="align-default" id="id3">
 <span id="lists-freebsd-proc-relationships"></span><img alt="Relationships between processes in the UNIX model" src="_images/design-impl-freebsd-proc.png" />
 <figcaption>
-<p><span class="caption-text">An illustration of some of the relationships between processes, appearing in the “Process Management” chapter of <em>The Design and Implementation of the FreeBSD Operating System</em>.</span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
+<p><span class="caption-text">An illustration of some of the relationships between processes, appearing in the “Process Management” chapter of <em>The Design and Implementation of the FreeBSD Operating System</em>.</span><a class="headerlink" href="#id3" title="Permalink to this image"></a></p>
 </figcaption>
 </figure>
 <p>If you think it would easy to forget what all these relationships are while looking at the FreeBSD source code…you would actually be wrong.</p>
@@ -272,7 +274,7 @@
 <p>If you study FreeBSD, you tend to have the following experience: first you read a chapter in the book that explains a high-level concept. Despite being conceptual (there is almost no source code in the book), the relationships between concepts are usually illustrated in a diagram like the one above. Then you pick up the source code. It is usually trivial to discover how the concept is modeled in the code, because despite being written in C, UNIX is a marvel of “object oriented” design: every <em>concept</em> gets a <em>language-level object</em> (usually a <code class="docutils literal notranslate"><span class="pre">struct</span></code>) that explicitly models it,  with the same name. It is also trivial to discover how it relates to all the other concepts: there are usually <code class="docutils literal notranslate"><span class="pre">queue(3)</span></code> entries to all the structures modeling the related concepts, exactly as they appear in the diagram. You are rarely at a loss to understand where something is defined. Even if all you have is <code class="docutils literal notranslate"><span class="pre">grep</span></code>, knowing the name of the <code class="docutils literal notranslate"><span class="pre">queue(3)</span></code> entry member is usually enough to find all users/modifiers of the relationship.</p>
 </section>
 <section id="why-does-it-work">
-<h2><a class="toc-backref" href="#id6">Why does it work?</a><a class="headerlink" href="#why-does-it-work" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id8">Why does it work?</a><a class="headerlink" href="#why-does-it-work" title="Permalink to this headline"></a></h2>
 <p>Many of us in the C++ developer community know Sean Parent; he has given a number of well-received talks at various C++ conferences. One theme in his talks is that it is critical to be able to “locally reason about code.” The big question is: do I have to look at <em>one place</em> in the code to understand what’s going on, or do I have to look <em>everywhere</em>. The cost of just <em>finding</em> all the places you’re supposed to look will increase as program size increases, and the comprehension cost will increase much more dramatically. In one of his most popular talks, he emphasizes using value semantics where possible – the lack of reference semantics means no other part the program (no matter how large!) can possibly affect the code we’re looking at.</p>
 <p>I think he’s on to something: it seems that all the comprehension superpowers I know – indentation, value semantics, intrusive lists, etc. – ultimately derive their power from how they enrich a small piece of text with a lot of information.</p>
 <p>Early in the development of CSD, intrusive entry objects did not re-specify the type of linked list they lived in, i.e., code using CSD used to look like this:</p>
@@ -292,11 +294,11 @@
 <p>This is redundant, and the template makes the implementation more complex. It was changed because after a long hiatus of not reading any FreeBSD kernel code, I returned to it and discovered that it makes some small difference – in terms of “effortless comprehension” – to see the type of the list locally restated. Look again at the above code listing for the FreeBSD process structure, <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">proc</span></code>. All the entry macros restate that their purpose is to join a <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">proc</span></code> into a data structure containing other <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">proc</span></code> instances, e.g., <code class="docutils literal notranslate"><span class="pre">LIST_ENTRY(proc)</span> <span class="pre">p_list</span></code> for the global process list.</p>
 <p>This is needed in <code class="docutils literal notranslate"><span class="pre">queue(3)</span></code> because of how the implementation works, but it is not strictly necessary in CSD. In the old code, that the <code class="docutils literal notranslate"><span class="pre">e</span></code> member links us into a list of other <code class="docutils literal notranslate"><span class="pre">ListItem</span></code> instances is <em>implicit</em>: we know it’s true because we’re using an intrusive list and by definition, intrusive lists link the kind of objects that contain the intrusive linkage. The old way wasn’t exactly <em>hard</em> to understand without this extra comprehension cue, but it lacked the clarity evident in the <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">proc</span></code> example. This originally went unnoticed because it doesn’t make much of a difference in simple examples, like the one above. As the structures grow larger, it becomes more difficult to keep track of things that are implicit/contextual. As CSD was used more extensively, it became clear that the original <code class="docutils literal notranslate"><span class="pre">queue(3)</span></code> style was better because it improved – in the words of Sean Parent – the “ability to locally reason about code.”</p>
 <p>For what it’s worth, I don’t think Sean Parent would be that enamored of intrusive lists: they are typically reference-heavy structures that point all over the place. That said, I doubt there is much of an alternative. Look at the sheer number of different data structures that a <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">proc</span></code> must simultaneously live in. This number cannot be reduced; the complexity of those relationships is specified by the UNIX process model, which has served us well for decades; it’s a good design we want to keep. Our goal is to create a source code design that helps us “mentally manage” that complexity. Intrusive lists make it possible to see all these relationships together and to draw clear architecture diagrams of how they appear in code. That makes it easier for new engineers to learn that architecture and the kernel code base, ensuring that UNIX continues to march on to victory.</p>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p>At the beginning of this article, I asserted that no one uses intrusive lists because of a sickness at the heart of professional computer programming. You would be forgiven for thinking that this is a ridiculous claim, or a non-sequituer, or just plain clickbait. It is actually true in a “trivial” sense; it is just a consequence of a more important truth.</p>
-<p>The explanation of what ails modern computer programming, as it turns out, isn’t so easy to summarize in a single help section, so it was moved to its own part of the manual page. <em>TODO</em>: add this article.</p>
-</div>
+<dl class="footnote brackets">
+<dt class="label" id="id2"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p>Chief among these anti-patterns is outsourcing the relationship management to some kind of in-memory database, i.e., model your core data structures using database primitives and hope the database’s query language will help you “slice and dice” the data. The rich object graphs formed by intrusive data structures are already “highly navigable”, and linking into a hash table or balanced tree is analogous to creating an “index” on that attribute of the data.</p>
+</dd>
+</dl>
 </section>
 </section>
 

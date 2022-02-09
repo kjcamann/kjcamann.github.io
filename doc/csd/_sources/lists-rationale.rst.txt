@@ -18,7 +18,11 @@ I've heard many people who don't know the answer try to guess at it. "The code b
 
 No, it would not.
 
-The real answer is deeper than you might think -- so deep that it goes right to the heart of the dysfunction in modern computer programming.
+There are actually two different reasons. The first is *stylistic* rather than technical: intrusive data structures end up making large codebases "easier to understand." Put simply, they help make your code "good" when used correctly.
+
+The second reason is deeper than you might think -- so deep that it goes right to the heart of the dysfunction in modern computer programming. Intrusive data structure design provides a clean way to place an object in multiple containers at once, allowing them to clearly model complex relationships. The "dysfunction" spoken about above is that most programmers do not know *any* good design patterns for how to model complex relationships, and thus fall into one of several classic anti-patterns which plauge many pieces of software. [1]_ The judicious use of intrusive data structures can prevent this.
+
+To be more accurate, these are not really two different reasons but a "what?" and a "how?". Clean modeling of complex relationships is *what* intrusive data structures do for you. *How* they end up being "cleaner" is a consequence of the code style they naturally foster.
 
 What makes code "good"?
 =======================
@@ -254,8 +258,4 @@ This is needed in ``queue(3)`` because of how the implementation works, but it i
 
 For what it's worth, I don't think Sean Parent would be that enamored of intrusive lists: they are typically reference-heavy structures that point all over the place. That said, I doubt there is much of an alternative. Look at the sheer number of different data structures that a ``struct proc`` must simultaneously live in. This number cannot be reduced; the complexity of those relationships is specified by the UNIX process model, which has served us well for decades; it's a good design we want to keep. Our goal is to create a source code design that helps us "mentally manage" that complexity. Intrusive lists make it possible to see all these relationships together and to draw clear architecture diagrams of how they appear in code. That makes it easier for new engineers to learn that architecture and the kernel code base, ensuring that UNIX continues to march on to victory.
 
-.. seealso::
-
-   At the beginning of this article, I asserted that no one uses intrusive lists because of a sickness at the heart of professional computer programming. You would be forgiven for thinking that this is a ridiculous claim, or a non-sequituer, or just plain clickbait. It is actually true in a "trivial" sense; it is just a consequence of a more important truth.
-
-   The explanation of what ails modern computer programming, as it turns out, isn't so easy to summarize in a single help section, so it was moved to its own part of the manual page. *TODO*: add this article.
+.. [1] Chief among these anti-patterns is outsourcing the relationship management to some kind of in-memory database, i.e., model your core data structures using database primitives and hope the database's query language will help you "slice and dice" the data. The rich object graphs formed by intrusive data structures are already "highly navigable", and linking into a hash table or balanced tree is analogous to creating an "index" on that attribute of the data.

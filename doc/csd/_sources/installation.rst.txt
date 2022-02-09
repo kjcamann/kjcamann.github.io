@@ -66,7 +66,7 @@ CSD includes a GDB pretty-printer extension to improve the formatting of its typ
 Option 1: always load the CSD pretty-printers
 ---------------------------------------------
 
-If you are a heavy user of CSD, you can add the following Python code directly to your ``.gdbinit`` file:
+If you are a heavy user of CSD, you can add the following Python code directly to your GDB initialization file:
 
 .. code-block:: python
 
@@ -79,7 +79,7 @@ If you are a heavy user of CSD, you can add the following Python code directly t
 
    end
 
-This will register the CSD pretty-printers every time you start ``gdb``.
+This will register the CSD pretty-printers every time you start ``gdb``. The typical initialization file is loaded from ``$XDG_CONFIG_HOME/gdb/gdbinit``, which defaults to ``$HOME/.config/gdb/gdbinit`` when ``$XDG_CONFIG_HOME`` is not defined. For more information see the GDB documentation `here <https://sourceware.org/gdb/onlinedocs/gdb/Startup.html>`_, specifically `this section <https://sourceware.org/gdb/onlinedocs/gdb/Initialization-Files.html#Home-Directory-Init-File>`_.
 
 Option 2: use GDB's Python auto-loading features
 ------------------------------------------------
@@ -95,7 +95,7 @@ Suppose you have an executable ``foo`` that uses CSD. Create a file called ``foo
    from csd import register_csd_pretty_printers
    register_csd_pretty_printers()
 
-Now GDB will automatically load the pretty-printers when ``foo`` is loaded. This also works for shared libraries (e.g., with a filename like ``libbar.so-gdb.py``). The user should be aware that by default, GDB auto-loading is restricted for security reasons. Unless you've explicitly relaxed GDB's security security settings, you'll need to add a line like this to your ``.gdbinit``:
+Now GDB will automatically load the pretty-printers when ``foo`` is loaded. This also works for shared libraries (e.g., with a filename like ``libbar.so-gdb.py``). The user should be aware that by default, GDB auto-loading is restricted for security reasons. Unless you've explicitly relaxed GDB's security security settings, you'll need to add a line like this to your ``gdbinit``:
 
 .. code-block:: none
 

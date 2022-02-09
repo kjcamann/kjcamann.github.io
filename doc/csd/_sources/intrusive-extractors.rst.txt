@@ -10,7 +10,7 @@ CSD provides several intrusive containers (:doc:`lists <lists-main>`, hash table
 
    A typical CSD intrusive data structure; the user must embed a CSD object (in this case, ``slist_entry``) into their own code, for the library to use. *Extractors* are the concept that enable CSD to find the embedded object.
 
-How does the intrusive library code -- located in CSD -- know how to find the storage inside a generic type, which is defined in the user's code? CSD uses two approaches: a more generic approach is used by the containers, and a simpler one is used by the reference-counted smart pointer. In both cases, *extractors* are the fundamental concept. At the source-code level, an "extractor" is just a tiny C++ ``concept`` similar to `std::invocable <https://en.cppreference.com/w/cpp/concepts/invocable>`_ but with an additional guarantee that the result can bind to a particular reference type:
+How does the intrusive library code -- located in CSD -- know how to find the storage inside the user's type, defined in the user's own code? CSD uses two approaches: a more generic approach is used by the containers, and a simpler one is used by the reference-counted smart pointer. In both cases, *extractors* are the fundamental concept. At the source-code level, an "extractor" is just a tiny C++ ``concept`` similar to `std::invocable <https://en.cppreference.com/w/cpp/concepts/invocable>`_ but with an additional guarantee that the result can bind to a particular reference type:
 
 .. code-block:: c++
 

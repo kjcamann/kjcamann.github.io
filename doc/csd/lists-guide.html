@@ -150,11 +150,21 @@
 <span class="c1">// intrusive links inside the list items (in this case, via using</span>
 <span class="c1">// a pointer-to-data-member access). Because this template is somewhat</span>
 <span class="c1">// verbose, a number of helper macros and type aliases are available;</span>
-<span class="c1">// these are explained later in the documentation.</span>
+<span class="c1">// one of these is shown immediately below and the rest of them are</span>
+<span class="c1">// explained later in the documentation.</span>
 <span class="k">using</span><span class="w"> </span><span class="n">list_t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">slist_head</span><span class="o">&lt;</span><span class="w"></span>
 <span class="w">  </span><span class="n">ListItem</span><span class="p">,</span><span class="w">                               </span><span class="c1">// Type of items in list</span>
-<span class="w">  </span><span class="n">invocable_constant</span><span class="o">&lt;&amp;</span><span class="n">ListItem</span><span class="o">::</span><span class="n">link</span><span class="o">&gt;</span><span class="p">,</span><span class="w">    </span><span class="c1">// How to access list links</span>
+<span class="w">  </span><span class="n">invocable_constant</span><span class="o">&lt;&amp;</span><span class="n">ListItem</span><span class="o">::</span><span class="n">link</span><span class="o">&gt;</span><span class="p">,</span><span class="w">    </span><span class="c1">// Functor to access list links</span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="p">;</span><span class="w">                           </span><span class="c1">// Type for `size()`</span>
+
+<span class="c1">// `slist_head_cinvoke_t` is an alias template that expands to the same</span>
+<span class="c1">// definition above, so you would normally write this instead. It is</span>
+<span class="c1">// syntactic sugar for the case where your intrusive link can be</span>
+<span class="c1">// accessed via a constexpr invocable (thus &quot;cinvoke&quot;), such as a data</span>
+<span class="c1">// member access or a &quot;getter&quot; member function. This helper alias wraps</span>
+<span class="c1">// your invocable NTTP inside a functor, and you also don&#39;t need to</span>
+<span class="c1">// write &quot;ListItem&quot; twice.</span>
+<span class="k">using</span><span class="w"> </span><span class="n">list_t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">slist_head_cinvoke_t</span><span class="o">&lt;&amp;</span><span class="n">ListItem</span><span class="o">::</span><span class="n">link</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
 
 <span class="c1">// Create an empty list and two items, then add the items to the list.</span>
 <span class="n">list_t</span><span class="w"> </span><span class="n">L</span><span class="p">;</span><span class="w"></span>
@@ -181,7 +191,7 @@ This is item #2
 <figure class="align-default" id="id4">
 <a class="reference external image-reference" href="_images/lists-guide-concept.png"><img alt="CSD slist datastructure diagram" src="_images/lists-guide-concept.png" /></a>
 <figcaption>
-<p><span class="caption-text">A CSD list object is little more than a pointer to the intial item; the items are <em>not</em> owned by the list, they are only linked into it (click to enlarge).</span><a class="headerlink" href="#id4" title="Permalink to this image"></a></p>
+<p><span class="caption-text">A CSD list object is little more than a pointer to the initial item; the items are <em>not</em> owned by the list, they are only linked into it (click to enlarge).</span><a class="headerlink" href="#id4" title="Permalink to this image"></a></p>
 </figcaption>
 </figure>
 <p>Compare this with node-based lists, like <code class="docutils literal notranslate"><span class="pre">std::forward_list</span></code>, which own their elements and store them in “node” containers that are allocated by the list itself. One possible implementation of this design is illustrated below:</p>
@@ -198,6 +208,7 @@ This is item #2
 <li><p>As a consequence of the above, list items are always inserted <em>by pointer</em>, i.e., for a list of type <code class="docutils literal notranslate"><span class="pre">T</span></code>, the insert family of functions require a <code class="docutils literal notranslate"><span class="pre">T*</span></code> value. To avoid breaking with the standard containers too much, all <em>non-insertion</em> member functions continue to use <code class="docutils literal notranslate"><span class="pre">T&amp;</span></code>, e.g., <code class="docutils literal notranslate"><span class="pre">front()</span></code> and <code class="docutils literal notranslate"><span class="pre">back()</span></code> continue to return a reference to the item, not a pointer to it.</p></li>
 <li><p>A list item cannot be added to multiple lists that use the same entry link.</p></li>
 <li><p>The list destructor doesn’t actually destroy the items (because it does not own them).</p></li>
+<li><p>As a result of this non-ownership, CSD lists are both <a class="reference external" href="https://en.cppreference.com/w/cpp/ranges/borrowed_range">borrowed ranges</a> and <a class="reference external" href="https://en.cppreference.com/w/cpp/ranges/view">non-copyable views</a>.</p></li>
 </ul>
 <p>CSD lists also provide some useful APIs which are not in the standard containers – see <a class="reference internal" href="lists-queue-and-stl.html#lists-extra-methods"><span class="std std-ref">Methods in CSD lists that do not exist in the STL</span></a>.</p>
 </section>
@@ -218,7 +229,7 @@ This is item #2
 <section id="choosing-the-entryex-parameter">
 <span id="lists-how-to-choose-extractor"></span><h3><a class="toc-backref" href="#id10">Choosing the EntryEx parameter</a><a class="headerlink" href="#choosing-the-entryex-parameter" title="Permalink to this headline"></a></h3>
 <p>All intrusive data structures in CSD are parameterized by a template parameter called an <em>extractor</em> – in this case an <strong>Entry Ex</strong>tractor – that knows how to extract the intrusive book-keeping object from the user’s type.</p>
-<p>Extractors are covered in detail in <a class="reference internal" href="intrusive-extractors.html"><span class="doc">Extractors: the Core Intrusive Concept</span></a>. That document explains the rationale for extractors and gives advice on how to define them. Below we cover the most common “syntactic sugar” way to declare the two main types of extractors: <code class="docutils literal notranslate"><span class="pre">offsetof</span></code>-based and <code class="docutils literal notranslate"><span class="pre">invocable_constant</span></code>-based.</p>
+<p>Extractors are covered in detail in <a class="reference internal" href="intrusive-extractors.html"><span class="doc">Extractors: the Core Intrusive Concept</span></a>. That document explains the rationale for extractors and gives advice on how to define them. If you are new CSD intrusive data structures, you should read that section first. Below we cover the most common “syntactic sugar” way to declare the two main types of extractors: <code class="docutils literal notranslate"><span class="pre">offsetof</span></code>-based and <code class="docutils literal notranslate"><span class="pre">invocable_constant</span></code>-based.</p>
 <section id="syntactic-sugar-for-declaring-extractors">
 <h4><a class="toc-backref" href="#id11">Syntactic sugar for declaring extractors</a><a class="headerlink" href="#syntactic-sugar-for-declaring-extractors" title="Permalink to this headline"></a></h4>
 <p>Because the list head templates are so verbose – mainly because of the extractor parameter – CSD provides helper alias templates and macros. Ideally we would not use any macros, but code patterns involving <code class="docutils literal notranslate"><span class="pre">offsetof</span></code> typically cannot be expressed without resorting to macros.</p>
